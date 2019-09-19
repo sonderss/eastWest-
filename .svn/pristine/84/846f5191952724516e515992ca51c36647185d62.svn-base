@@ -1,0 +1,584 @@
+<template>
+  <div>
+    <div class="but_list">
+      <Button type="primary" @click="add">新增</Button>
+
+      <Button type="primary" @click="exportfile">导入</Button>
+    </div>
+    <Modal width=750 draggable v-model="modal1" :title="title" @on-ok="ok">
+      <div class="modal_form">
+        <Form ref="formCustom" :label-width="80" :model="formItem" :rules="ruleValidate" action="">
+           <FormItem label="SKU" prop="skuinput">
+             <Input v-model="formItem.skuinput" placeholder="Sku"></Input>
+           </FormItem>
+           <FormItem label="简称" prop="nameinput">
+             <Input v-model="formItem.nameinput" placeholder="简称"></Input>
+           </FormItem>
+           <FormItem label="规格">
+             <Input v-model="formItem.sapecsinput" placeholder="规格"></Input>
+           </FormItem>
+           <FormItem label="网页标题">
+             <Input v-model="formItem.titleinput" placeholder="网页标题"></Input>
+           </FormItem>
+           <FormItem label="网页描述">
+              <Input v-model="formItem.decinput"  type="textarea" :autosize="{minRows: 2,maxRows: 6}" ></Input>
+           </FormItem>
+           <FormItem label="网页关键字">
+              <Input v-model="formItem.keyinput"  type="textarea" :autosize="{minRows: 2,maxRows: 6}" ></Input>
+           </FormItem>
+           <FormItem label="商品描述">
+                <Editor></Editor>
+           </FormItem>
+           <FormItem label="来源">
+              <RadioGroup v-model="formItem.originradio">
+                 <Radio label="网站采购">网站采购</Radio>
+                 <Radio label="站内作者">站内作者</Radio>
+              </RadioGroup>
+           </FormItem>
+
+           <FormItem label="所有者">
+              <Input v-model="formItem.allinput" placeholder="所有者"></Input>
+           </FormItem>
+
+           <FormItem label="分类">
+                <Select v-model="formItem.model1" style="width:200px">
+                    <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+           </FormItem>
+
+           <FormItem label="品牌">
+                <Select v-model="formItem.model3" style="width:200px">
+                    <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+           </FormItem>
+           <FormItem label="计量单位" prop="unitinput">
+                <Select v-model="formItem.unitinput" style="width:200px">
+                    <Option v-for="item in unitlist" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+           </FormItem>
+
+           <FormItem label="默认仓库">
+                 <Select v-model="formItem.model5" style="width:200px">
+                     <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                 </Select>
+           </FormItem>
+
+           <FormItem label="市场价$">
+                 <InputNumber :step="0.0001"  :min="0" v-model="formItem.value6"></InputNumber>
+           </FormItem>
+           <FormItem label="售价$">
+                 <InputNumber :step="0.0001"  :min="0" v-model="formItem.value7"></InputNumber>
+           </FormItem>
+           <FormItem label="库存量">
+                  <InputNumber :step="0.01"  :min="0" v-model="formItem.value1"></InputNumber>
+           </FormItem>
+           <FormItem label="重量(kg)">
+                  <InputNumber :step="0.01"  :min="0" v-model="formItem.value2"></InputNumber>
+           </FormItem>
+           <FormItem label="长(cm)">
+                  <InputNumber :step="0.01"  :min="0" v-model="formItem.value3"></InputNumber>
+           </FormItem>
+           <FormItem label="宽(cm)">
+                  <InputNumber :step="0.01"  :min="0" v-model="formItem.value4"></InputNumber>
+           </FormItem>
+           <FormItem label="高(cm)">
+                  <InputNumber :step="0.01"  :min="0" v-model="formItem.value5"></InputNumber>
+           </FormItem>
+           <FormItem label="商品类型">
+                  <Select v-model="formItem.model6" style="width:200px">
+                     <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                  </Select>
+           </FormItem>
+        </Form>
+      </div>
+
+    </Modal>
+    <Modal width=750 draggable v-model="modal2" title="批量导入商品" @on-ok="upfile" ok-text="提交">
+         <Upload
+                multiple
+                type="drag"
+                action="//jsonplaceholder.typicode.com/posts/">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>拖放文件到此处或点击选择文件</p>
+                </div>
+          </Upload>
+    </Modal>
+    <Modal width=750 draggable v-model="modal4" @before-upload='success' title="新增商品图片" @on-ok="upfile" ok-text="提交">
+           <Upload
+                  multiple
+                  type="drag"
+                  action="//jsonplaceholder.typicode.com/posts/">
+                  <div style="padding: 20px 0">
+                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                      <p>拖放文件到此处或点击选择文件</p>
+                  </div>
+            </Upload>
+    </Modal>
+    <Modal width=650 draggable v-model="modal3" title="删除操作" @on-ok="sure_remove">
+        <p style="font-size: 18px;text-align: center;">确定删除吗?</p>
+    </Modal>
+    
+    <div class="search">
+      <span>搜索</span>
+      <input type="text" placeholder="请输入关键字" />
+      <Button type="primary">快速查询</Button>
+    </div>
+
+    <div calss="parent">
+      <Table @on-row-click="rowclick" border :columns="columns1" :data="data1" highlight-row >
+          <template slot-scope='{row,index}' slot="action">
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+              <Button  type="error" size="small" @click="remove(index)">删除</Button>
+              <Button class="btn" type="primary" size="small" style="margin:0 6px;background: gray; border-color: gray;" @click="undercarriage(index)">下架</Button>
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: seagreen; border-color: seagreen;" @click="grounding(index)">上架</Button>
+          </template>
+      </Table>
+    </div>
+
+    <div class="page"><Page :total="page_total" /></div>
+
+    <Tabs type="card" value="name1">
+      <div slot="extra" style="border: none;" class="but_list">
+        <Button type="primary" @click="expand_add">新增</Button>
+
+        <Button type="primary">上传到FTP</Button>
+      </div>
+      <TabPane label="商品图片" name="name1">
+        <Table border :columns="columns2">
+          <template slot-scope='{row,index}' slot="action">
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+              <Button  type="error" size="small" @click="remove(index)">删除</Button>
+              <Button class="btn" type="primary" size="small" style="margin:0 6px;background: gray; border-color: gray;">下架</Button>
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: seagreen; border-color: seagreen;">上架</Button>
+          </template>
+        </Table>
+      </TabPane>
+      <TabPane label="效果图" name="name2">
+        <Table border :columns="columns2">
+          <template slot-scope='{row,index}' slot="action">
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+              <Button  type="error" size="small" @click="remove(index)">删除</Button>
+              <Button class="btn" type="primary" size="small" style="margin:0 6px;background: gray; border-color: gray;">下架</Button>
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: seagreen; border-color: seagreen;">上架</Button>
+          </template>
+        </Table>
+      </TabPane>
+      <TabPane label="场景设置" name="name3"></TabPane>
+    </Tabs>
+  </div>
+</template>
+
+<script>
+import Editor from '@/view/components/editor/editor.vue'
+import data from './data.js'
+export default {
+  name: 'goodsinfo',
+  data () {
+    return {
+      dataList: data,
+      page_total: 100,
+      modal1: false,
+      modal2: false,
+      modal3: false,
+      modal4: false,
+      num1: 0,
+      title: '',
+      flag: true,
+      unitlist: [
+        {
+          value: 'Piece',
+          label: 'Piece'
+        },
+        {
+          value: 'Set',
+          label: 'Set'
+        }
+      ],
+      cityList: [
+        {
+          value: 'New York',
+          label: 'New York'
+        },
+        {
+          value: 'London',
+          label: 'London'
+        },
+        {
+          value: 'Sydney',
+          label: 'Sydney'
+        },
+        {
+          value: 'Ottawa',
+          label: 'Ottawa'
+        },
+        {
+          value: 'Paris',
+          label: 'Paris'
+        },
+        {
+          value: 'Canberra',
+          label: 'Canberra'
+        }
+      ],
+
+      formItem: {
+        skuinput: '',
+        nameinput: '',
+        sapecsinput: '',
+        titleinput: '',
+        decinput: '',
+        keyinput: '',
+        originradio: '网站采购',
+        unitinput: '',
+        allinput: '',
+        model1: '',
+        model3: '',
+
+        model5: '',
+        model6: '',
+
+        value1: 0,
+        value2: 0,
+        value3: 0,
+        value4: 0,
+        value5: 0,
+        value6: 0,
+        value7: 0
+      },
+      ruleValidate: {
+        skuinput: [
+          { required: true, message: 'SKU不能为空', trigger: 'blur' }
+        ],
+        nameinput: [
+          { required: true, message: '简称不能为空', trigger: 'blur' }
+        ],
+        unitinput: [
+          { required: true, message: '计量单位不能为空', trigger: 'blur' }
+        ]
+      },
+      columns2: [
+        {
+          title: '扩展名',
+          key: 'exten_name',
+          align: 'center'
+        },
+        {
+          title: '文件大小',
+          key: 'file_size',
+          align: 'center'
+        },
+        {
+          title: '高',
+          key: 'height',
+          align: 'center'
+        },
+        {
+          title: '宽',
+          key: 'width',
+          align: 'center'
+        },
+        {
+          title: '录入时间',
+          key: 'time',
+          align: 'center'
+        },
+        {
+          title: '状态',
+          key: 'states',
+          align: 'center'
+
+        },
+        {
+          title: '操作',
+          slot: 'actions',
+          width: 230,
+          align: 'center'
+        }
+      ],
+      columns1: [
+        {
+          title: 'SKU',
+          key: 'sku',
+          align: 'center'
+        },
+        {
+          title: '简称',
+          key: 'name',
+          align: 'center'
+        },
+        {
+          title: '规格',
+          key: 'norms',
+          align: 'center'
+        },
+        {
+          title: '市场价',
+          key: 'rmb',
+          align: 'center'
+        },
+        {
+          title: '售价',
+          key: 'price',
+          align: 'center'
+        },
+        {
+          title: '状态',
+          key: 'state',
+          align: 'center'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 230,
+          align: 'center'
+        }
+      ],
+      data1: [
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架',
+          unit: 'Piece'
+        }
+      ]
+    }
+  },
+  methods: {
+    add () {
+      this.modal1 = true
+      this.title = '新增操作'
+      this.$refs.formCustom.resetFields()
+    },
+    show (index) {
+      this.modal1 = true
+      this.title = '修改操作'
+      this.$refs.formCustom.resetFields()
+      this.formItem.skuinput = this.data1[index].sku
+      this.formItem.nameinput = this.data1[index].name
+      this.formItem.sapecsinput = this.data1[index].ename
+      this.formItem.value6 = this.data1[index].rmb.split('$')[1]
+      this.formItem.value7 = this.data1[index].price.split('$')[1]
+      this.formItem.unitinput = this.data1[index].unit
+      this.num1 = index
+      this.flag = false
+    },
+    remove (index) {
+      this.modal3 = true
+      this.num1 = index
+    },
+    ok () {
+      this.$refs.formCustom.validate(res => {
+        if (this.flag) {
+          if (res) {
+            let obj = {
+              sku: this.formItem.skuinput,
+              name: this.formItem.nameinput,
+              norms: this.formItem.eninput,
+              rmb: '$0.0000',
+              price: '$341.0000',
+              state: '暂存',
+              unit: this.formItem.unitinput
+            }
+            this.data1.push(obj)
+            this.$Message.success('添加成功')
+          } else {
+            this.$Message.error('操作失败')
+          }
+        } else {
+          if (res) {
+            this.data1[this.num1].sku = this.formItem.skuinput
+            this.data1[this.num1].name = this.formItem.nameinput
+            this.data1[this.num1].norms = this.formItem.sapecsinput
+            this.data1[this.num1].rmb = '$' + this.formItem.value6
+            this.data1[this.num1].price = '$' + this.formItem.value7
+            this.data1[this.num1].state = '上架'
+            this.$Message.success('修改成功')
+          } else {
+            this.$Message.error('操作失败')
+          }
+        }
+      })
+    },
+    exportfile () {
+      this.modal2 = true
+    },
+    upfile () {
+
+    },
+    sure_remove () {
+      this.data1.splice(this.num1, 1)
+      this.$Message.success('删除成功')
+    },
+    undercarriage (index) {
+      if (this.data1[index].state === '下架') {
+        this.$Message.warning('该商品已经处于下架状态')
+      } else {
+        this.data1[index].state = '下架'
+        this.$Message.success('下架成功')
+      }
+    },
+    grounding (index) {
+      if (this.data1[index].state === '上架') {
+        this.$Message.warning('该商品已经处于上架状态')
+      } else {
+        this.data1[index].state = '上架'
+        this.$Message.success('上架成功')
+      }
+    },
+    rowclick (data, index) {
+      console.log(data, index)
+    },
+    expand_add () {
+      this.modal4 = true
+    },
+    success () {
+      console.log('1223456')
+    }
+  },
+  components: {
+    Editor
+  }
+}
+</script>
+
+<style scoped lang="less">
+  .modal_form{
+    Input{
+      width:90%
+    }
+    textarea{
+      width: 90%;
+    }
+  }
+ .modal_form{
+   width: 750px;
+   height:650px;
+   overflow:auto
+ }
+.btn:hover{
+  opacity: 0.8
+}
+.page {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.but_list {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px dashed #dedede;
+  padding-bottom: 10px;
+  button {
+    margin: 0 2px;
+  }
+}
+.search {
+  span {
+    font-size: 15px;
+  }
+  margin: 15px 0;
+  input {
+    margin: 0 20px;
+    padding: 5px;
+  }
+}
+.list{
+
+  li{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px 0;
+    span{
+      display: inline;
+      width: 50px;
+      margin-right: 20px;
+    }
+  }
+}
+</style>

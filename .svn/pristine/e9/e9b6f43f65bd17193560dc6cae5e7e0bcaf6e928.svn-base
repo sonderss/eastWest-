@@ -1,0 +1,386 @@
+<template>
+  <div>
+    <div class="but_list">
+      <Button type="primary" @click="add">新增</Button>
+
+      <Button type="primary">导入</Button>
+    </div>
+    <Modal width=650 draggable v-model="modal1" title="新增商品" @on-ok="ok" @on-cancel="cancel">
+        <Form :label-width="80" :model="formItem" :rules="ruleValidate" action="">
+           <FormItem label="SKU" prop="skuinput">
+             <Input v-model="formItem.skuinput" placeholder="Sku"></Input>
+           </FormItem>
+           <FormItem label="简称" prop="nameinput">
+             <Input v-model="formItem.nameinput" placeholder="简称"></Input>
+           </FormItem>
+           <FormItem label="规格">
+             <Input v-model="formItem.sapecsinput" placeholder="规格"></Input>
+           </FormItem>
+           <FormItem label="网页标题">
+             <Input v-model="formItem.titleinput" placeholder="网页标题"></Input>
+           </FormItem>
+           <FormItem label="网页描述">
+              <Input v-model="formItem.decinput"  type="textarea" :autosize="{minRows: 2,maxRows: 6}" ></Input>
+           </FormItem>
+           <FormItem label="网页关键字">
+              <Input v-model="formItem.keyinput"  type="textarea" :autosize="{minRows: 2,maxRows: 6}" ></Input>
+           </FormItem>
+           <FormItem label="商品描述">
+
+           </FormItem>
+           <FormItem label="来源">
+              <RadioGroup v-model="formItem.originradio">
+                 <Radio label="网站采购">网站采购</Radio>
+                 <Radio label="站内作者">站内作者</Radio>
+              </RadioGroup>
+           </FormItem>
+
+           <FormItem label="所有者">
+
+           </FormItem>
+
+           <FormItem label="分类">
+
+           </FormItem>
+
+           <FormItem label="品牌">
+
+           </FormItem>
+
+           <FormItem label="计量单位">
+
+           </FormItem>
+
+           <FormItem label="默认仓库">
+
+           </FormItem>
+
+           <FormItem label="市场价$">
+
+           </FormItem>
+           <FormItem label="售价$">
+
+           </FormItem>
+           <FormItem label="库存量">
+
+           </FormItem>
+           <FormItem label="重量(kg)">
+
+           </FormItem>
+           <FormItem label="长(cm)">
+
+           </FormItem>
+           <FormItem label="宽(cm)">
+
+           </FormItem>
+           <FormItem label="高(cm)">
+
+           </FormItem>
+           <FormItem label="商品类型">
+
+           </FormItem>
+           <FormItem label="Subject">
+
+           </FormItem>
+           <FormItem label="Description">
+
+           </FormItem>
+           <FormItem label="Style">
+
+           </FormItem>
+           <FormItem label="Gift ldea">
+
+           </FormItem>
+           <FormItem label="Size(cm)">
+
+           </FormItem>
+           <FormItem label="Size(inch)">
+
+           </FormItem>
+           <FormItem label="Packaging and specifications">
+
+           </FormItem>
+           <FormItem label="Reamarks">
+
+           </FormItem>
+        </Form>
+    </Modal>
+
+    <div class="search">
+      <span>搜索</span>
+      <input type="text" placeholder="请输入关键字" />
+      <Button type="primary">快速查询</Button>
+    </div>
+
+    <div calss="parent">
+      <Table disabled-hover="true"  border :columns="columns1" :data="data1">
+          <template slot-scope='{row,index}' slot="action">
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+              <Button  type="error" size="small" @click="remove(index)">删除</Button>
+              <Button class="btn" type="primary" size="small" style="margin:0 6px;background: gray; border-color: gray;">下架</Button>
+              <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: seagreen; border-color: seagreen;">上架</Button>
+          </template>
+      </Table>
+    </div>
+
+    <div class="page"><Page :total="page_total" /></div>
+
+    <Tabs type="card" value="name1">
+      <div slot="extra" style="border: none;" class="but_list">
+        <Button type="primary">新增</Button>
+        <Button type="primary">修改</Button>
+        <Button type="primary">删除</Button>
+        <Button type="primary">注销</Button>
+        <Button type="primary">启用</Button>
+        <Button type="primary">上传到FTP</Button>
+      </div>
+      <TabPane label="商品图片" name="name1">
+
+        <Table border :columns="columns2"></Table>
+      </TabPane>
+      <TabPane label="效果图" name="name2"><Table border :columns="columns2"></Table></TabPane>
+      <TabPane label="场景设置" name="name3"><Table border :columns="columns2"></Table></TabPane>
+    </Tabs>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'goodsinfo',
+  data () {
+    return {
+      page_total: 100,
+      modal1: false,
+      formItem: {
+        skuinput: '',
+        nameinput: '',
+        sapecsinput: '',
+        titleinput: '',
+        decinput: '',
+        keyinput: '',
+        originradio: '网站采购',
+        select: '',
+        radio: '',
+        checkbox: [],
+        switch: true,
+        date: '',
+        time: '',
+        slider: [20, 50],
+        textarea: ''
+      },
+      ruleValidate: {
+        skuinput: [
+          { required: true, message: 'SKU不能为空', trigger: 'blur' }
+        ],
+        nameinput: [
+          { required: true, message: '简称不能为空', trigger: 'blur' }
+        ]
+      },
+      columns2: [
+        {
+          title: '扩展名',
+          key: 'exten_name'
+        },
+        {
+          title: '文件大小',
+          key: 'file_size'
+        },
+        {
+          title: '高',
+          key: 'height'
+        },
+        {
+          title: '宽',
+          key: 'width'
+        },
+        {
+          title: '录入时间',
+          key: 'time'
+        },
+        {
+          title: '状态',
+          key: 'states'
+        }
+      ],
+      columns1: [
+        {
+          title: 'SKU',
+          key: 'sku',
+          align: 'center'
+        },
+        {
+          title: '简称',
+          key: 'name',
+          align: 'center'
+        },
+        {
+          title: '规格',
+          key: 'norms',
+          align: 'center'
+        },
+        {
+          title: '市场价',
+          key: 'rmb',
+          align: 'center'
+        },
+        {
+          title: '售价',
+          key: 'price',
+          align: 'center'
+        },
+        {
+          title: '状态',
+          key: 'state',
+          align: 'center'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 230,
+          align: 'center'
+        }
+      ],
+      data1: [
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        },
+        {
+          sku: 'OPT0094',
+          name: 'Time Square',
+          norms: '',
+          rmb: '$0.0000',
+          price: '$341.0000',
+          state: '上架'
+        }
+      ]
+    }
+  },
+  methods: {
+    add () {
+      this.modal1 = true
+    },
+    remove (index) {
+      this.data1.splice(index, 1)
+    },
+    ok () {
+
+    },
+    cancel () {
+
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.btn:hover{
+  opacity: 0.8;
+}
+.page {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.but_list {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px dashed #dedede;
+  padding-bottom: 10px;
+  button {
+    margin: 0 2px;
+  }
+}
+.search {
+  span {
+    font-size: 15px;
+  }
+  margin: 15px 0;
+  input {
+    margin: 0 20px;
+    padding: 5px;
+  }
+}
+.list{
+
+  li{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px 0;
+    span{
+      display: inline;
+      width: 50px;
+      margin-right: 20px;
+    }
+  }
+}
+</style>

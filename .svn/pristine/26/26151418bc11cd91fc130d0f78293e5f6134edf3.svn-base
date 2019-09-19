@@ -1,0 +1,7 @@
+export default {
+  odd_num: '订单信息',
+  basis_set: '基础数据',
+  num_unit: '计量单位',
+  brand_set: '品牌设置',
+  user_manage: '用户管理'
+}

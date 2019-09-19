@@ -1,0 +1,326 @@
+<template>
+<div>
+ <div class="demo-split">
+      
+            <div slot="top" class="demo-split-pane">
+                <Button type="error" @click="remove1">删除</Button>
+                <Button type="warning" @click="setMessage1(setData,index)">修改</Button>
+                 <Button type="success" @click="addMessage1">新增</Button>
+            </div>
+        
+    </div>  
+    <Table border :columns="columns7" :data="list" :highlight-row='true'  @on-row-click='getIndex'></Table>
+    <Page :total="total"  :current="pageNo" id='emailMessage' :page-size='pageSize' @on-change='onChange' />
+    <Modal
+            v-model="modal6"
+            title="确定删除吗？"
+            @on-ok="onOK(index)">
+    </Modal>
+    <!-- 新增邮件信息 -->
+    <Modal
+            v-model="addMessage"
+            title="新增邮件信息"
+            :draggable=true
+        >
+        <div class="mode_addMessage">
+              <p v-if="showToast" class='toast'>请补充完整</p>
+            <div class="addMessage1">
+                标识： <input type="text"  style="margin-right:0" v-model="id" placeholder="填写标识" class="test"/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+           
+            <div  class="addMessage1">
+                标题：<input type="text"  v-model="title" placeholder="填写标题"/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+            <div  class="addMessage1">
+                发件人：<input type="text" style="margin-left:5px" v-model="name" placeholder="填写发件人"/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+            <div  class="addMessage1">
+                备注：<input type="text" v-model="desc" placeholder="备注..."/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+        </div>
+          <div slot="footer">
+            <Button type="text" size="large" @click="cancel">取消</Button>
+            <Button type="primary" size="large" @click="isAdd">确定</Button>
+           </div>
+    </Modal>
+    <!-- 修改邮件信息 -->
+    <Modal
+            v-model="setMessage"
+            title="修改邮件信息"
+            :draggable=true
+        >
+        <div >
+              <p v-if="showToast" class='toast'>请补充完整</p>
+            <!-- <div class="addMessage1">
+                标识： <input type="text" v-model="id" placeholder="填写标识" class="test"/>
+            </div> -->
+            <div  class="addMessage1">
+                标题：<input type="text"  v-model="title" placeholder="填写标题"/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+            <div  class="addMessage1">
+                发件人：<input type="text" v-model="name" placeholder="填写发件人"/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+            <div  class="addMessage1">
+                备注：<input type="text" v-model="desc" placeholder="备注..."/><Icon type="md-medical" color='red' size='12px' class="add"/>
+            </div>
+        </div>
+          <div slot="footer">
+            <Button type="text" size="large"  @click="cancel">取消</Button>
+            <Button type="primary" size="large" @click="isSet(index)">确定</Button>
+           </div>
+    </Modal>
+</div>
+   
+</template>
+<script>
+import axios from 'axios'
+    export default {
+        data () {
+            return {
+                total:20,
+                list:[],
+                pageNo:1,
+                pageSize:5, //每页条数
+                modal6:false,
+                index:'',
+                id:'',
+                title:'',
+                name:'',
+                desc:'',
+                addMessage:false,
+                setMessage:false,
+                setData:'',
+                showToast:false,
+                columns7: [
+                    {
+                        title: '标识',
+                        key: 'id',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'person'
+                                    }
+                                }),
+                                h('strong', params.row.id)
+                            ]);
+                        }
+                    },
+                    {
+                        title: '标题',
+                        key: 'title'
+                    },
+                    {
+                        title: '发件人',
+                        key: 'name'
+                    },
+                     {
+                        title: '备注',
+                        key: 'desc'
+                    },
+                    {
+                        title: '操作',
+                        key: 'set',
+                        width: 150,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.show(params.index)
+                                        }
+                                    }
+                                }, 'View'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.remove(params.index)
+                                        }
+                                    }
+                                }, 'Delete')
+                            ]);
+                        }
+                    }
+                ]
+            }
+        },
+        mounted() {
+            axios({
+                url:'http://www.baidu.com/emil'
+            }).then((res)=>{
+               // console.log(res.data.list)
+                if(res.data.list.length <= 5 ){
+                    this.list = res.data.list
+                }else{
+                    this.list = res.data.list.splice(0,this.pageSize)
+                }
+            })
+        },
+        methods: {
+            show (index) {
+                this.$Modal.info({
+                    title: 'Info',
+                    content: `标题：${this.list[index].title}<br>名字：${this.list[index].name}<br>备注：${this.list[index].desc}`
+                })
+            },
+            getIndex(data,index){
+               // console.log(data,index)
+                this.index = index
+                this.setData = data
+            },
+            //删除某项
+            remove (index) {
+                this.list.splice(index, 1);
+            },
+            onChange(val){
+           // console.log(val)
+            this.pageNo = val  //改变后的页码
+            },
+            remove1(){
+                //console.log(123)
+                this.modal6 = true
+            },
+            //确认是否删除
+            onOK(index){
+                this.remove(index)
+            },
+           isAdd(){
+               // console.log(this.name,this.username,this.password,this.gonghao)
+                // if(!this.desc){
+                //    this.toastName = '请输入姓名'
+                // }
+                // if(!this.username){
+                //    this.toastUsername = '请输入账号名'
+                // }
+                // if(!this.password){
+                //    this.toastPsd = '请输入密码'
+                // }
+                if(this.desc && this.name && this.title && this.id){
+                    
+                     var obj = {
+                         id:this.id,
+                         name:this.name,
+                         title:this.title,
+                         desc:this.desc
+                     }
+                     this.list.unshift(obj)
+                     this.addMessage = false
+                     this.showToast = false
+                      //清空输入框
+                    this.name = ''
+                    this.desc = ''
+                    this.title = ''
+                    this.id = ''
+                }else{
+                    this.showToast = true
+                }
+                
+            },
+            //弹出添加信息框
+            addMessage1(){
+                this.addMessage = true
+            },
+            setMessage1(data,index){
+                if( typeof(index) == 'number'){
+                    //console.log(index)
+                    //this.addMessage = true
+                     this.setMessage = true
+                }else{
+                   alert('请选择一项进行修改')
+                }
+               //console.log(data)
+            },
+            //确认修改
+            isSet(index){
+                //console.log(this.title,this.desc,this.name)
+                if(this.title && this.name && this.desc){
+                    this.list[index].desc = this.desc
+                    this.list[index].title = this.title
+                    this.list[index].name = this.name
+                    this.setMessage  = false
+                    this.showToast = false
+                    
+                    //清空输入框
+                    this.name = ''
+                    this.desc = ''
+                    this.title = ''
+                   
+                }else{
+                     this.showToast = true
+                }
+               
+            },
+            cancel(){
+                this.showToast = false
+                this.addMessage = false
+                this.setMessage = false
+            }
+        }
+    }
+</script>
+
+<style scoped>
+.demo-split{
+        height: 50px;
+        border-bottom: 1px solid #dcdee2;
+    }
+.demo-split-pane{
+        padding: 10px;
+    }
+.demo-split-pane  button{
+    margin: 0 10px;
+    float: right;
+}
+#emailMessage{
+    float: right;
+    padding-top: 20px
+}
+.addMessage1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px
+}
+.addMessage1 input {
+    margin-left: 15px;
+}
+.add{
+    margin-left:5px 
+}
+.test{
+    margin-right:65px
+}
+.toast{
+    animation: toast 1s infinite;
+}
+@keyframes toast {
+		       0% {             
+		           color: #ccc
+				  
+		        }            
+		        50% {                
+		           color:#f00 
+					
+		        }            
+		        100% {                
+		           color:#ccc
+		        }
+		}
+.mode_addMessage{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around
+}
+</style>

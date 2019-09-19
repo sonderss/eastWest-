@@ -1,0 +1,248 @@
+<template>
+    <div>
+       <div class="demo-split">
+           
+                <div slot="top" class="demo-split-pane">
+                    <div class="btn">
+                        <Button type="info" @click="start">启用</Button>
+                        <Button type="primary" @click="remove1(index)" >删除</Button>
+                        <Button type="success" @click="setUser">修改</Button>
+                        <Button type="warning">注销</Button>
+                        <Button type="error" @click="addUser">新增</Button>
+                     </div>
+                </div> 
+        </div>
+            <div slot="bottom" class="pane">
+               搜索     <Input v-model="keywords" placeholder="请输入姓名进行搜索..." style="width: 300px" />  <Button type="primary" @click="search1(keywords)">搜索</Button>
+            </div>
+        <div>
+            <Table @on-row-click="getIndex" :highlight-row=true :columns="columns1" :data="list"></Table>
+            
+        </div>
+        <Modal
+            v-model="modal6"
+            title="确定删除吗？"
+            @on-ok="onOK(index)">
+        </Modal>
+        <Modal
+            v-model="addMessage"
+            title="新增账号"
+            :draggable=true
+        >
+        <div >
+            <div class="addMessage1">
+                工号： <input type="text" v-model="gonghao" placeholder="填写员工工号" class="test"/>
+            </div>
+            <div  class="addMessage1">
+                姓名：<input type="text"  v-model="name" placeholder="填写员工姓名"/><Icon type="md-medical" color='red' size='12px' class="add"/>{{toastName}}
+            </div>
+            <div  class="addMessage1">
+                账号：<input type="text" v-model="username" placeholder="填写员工账号名"/><Icon type="md-medical" color='red' size='12px' class="add"/>{{toastUsername}}
+            </div>
+            <div  class="addMessage1">
+                密码：<input type="text" v-model="password" placeholder="填写4-10位密码"/><Icon type="md-medical" color='red' size='12px' class="add"/>{{toastPsd}}
+            </div>
+        </div>
+          <div slot="footer">
+            <Button type="text" size="large" @click="cancel">取消</Button>
+            <Button type="primary" size="large" @click="isAdd">确定</Button>
+           </div>
+        </Modal>
+
+    </div>
+</template>
+
+<script>
+import axios from 'axios'
+export default {
+        data() {
+            return {
+                gonghao:'',
+                name:'',
+                password:'',
+                username:'',
+                total:20,
+                modal6:false,
+                addMessage:false,
+                keywords:'',
+                index:'',
+                toastName:'为必填项',
+                toastUsername:'为必填项',
+                toastPsd:'为必填项',
+                pageSize:5, //每页条数
+                list:[],
+                pageNo:1,
+                columns1: [
+                    {
+                        title: '工号',
+                        key: 'id'
+                    },
+                    {
+                        title: '姓名',
+                        key: 'name'
+                    },
+                    {
+                        title: '账号名',
+                        key: 'username'
+                    },
+                    {
+                        title: '登录次数',
+                        key: 'loginIn'
+                    },  
+                    {
+                        title: '登录时间',
+                        key: 'loginTime'
+                    },
+                    {
+                        title: 'IP',
+                        key: 'ip'
+                    },
+                    {
+                        title: '状态',
+                        key: 'staic'
+                    },
+                    {
+                        title: '录入时间',
+                        key: 'loginTime'
+                    },
+                    {
+                        title: '创建人',
+                        key: 'username'
+                    },
+                ]
+            }
+       },
+        mounted() {
+            axios({
+                url:'http://www.baidu.com/users'
+            }).then(res=>{
+                console.log(res.data.list)
+                this.list = res.data.list
+            })
+        },
+        methods: {
+            remove (index) {
+                this.list.splice(index, 1);
+               // console.log(this.list) 
+            },
+            //拿到点击某行的index
+            getIndex(data,index){
+                console.log(data,index)
+                this.index = index
+            },
+            //点击删除按钮  确认删除提示
+            remove1(){
+               this.modal6 = true
+               
+            },
+            onOK(index){
+                 this.remove(index)
+            },
+            //新增数据
+            addUser(){
+                this.addMessage = true
+            },
+            //确定添加 （这里只是本地添加，没有传输到服务器）
+            isAdd(){
+               // console.log(this.name,this.username,this.password,this.gonghao)
+                if(!this.name){
+                   this.toastName = '请输入姓名'
+                }
+                if(!this.username){
+                   this.toastUsername = '请输入账号名'
+                }
+                if(!this.password){
+                   this.toastPsd = '请输入密码'
+                }
+                if(this.name && this.username && this.password){
+                    
+                     var obj = {
+                         id:this.gonghao,
+                         name:this.name,
+                         username:this.username,
+                     }
+                     this.list.push(obj)
+                     this.addMessage = false
+                }
+            },
+            //关闭添加信息框
+            cancel(){
+                alert('将要关闭')
+                 this.addMessage = false
+            },
+            //定义搜索方法
+            search(keywords){
+                 return this.list.filter(item =>{
+                     if(item.name.includes(keywords)){
+                         return item
+                     }
+                 })
+            },
+            //调用搜索方法，通过关键词进行搜索
+            search1(keywords){
+               var arr =   this.search(keywords)
+               this.list = arr
+                if(!keywords){
+                    axios({
+                        url:'http://www.baidu.com/users'
+                    }).then(res=>{
+                       // console.log(res.data.list)
+                        this.list = res.data.list
+                    })
+                }
+            },
+            //修改按钮，弹出修改框
+            setUser(){
+               this.addMessage = true
+            },
+            start(){
+                alert('将改变为暂存')
+                
+            }
+        },
+      
+}
+</script>
+
+<style  scoped>
+   .demo-split{
+        height: 50px;
+        border: 1px solid #dcdee2;
+    }
+    .demo-split-pane{
+        padding: 10px;
+
+    }
+    .btn{
+        width: 50%;
+        float: right;
+    }
+     .btn button{
+         float: right;
+         margin: 0 6px
+     }
+     .search {
+         width: 100px;
+     }
+     .pane{
+         width: 100%;
+         height: 50px;
+         border: 1px solid #dcdee2;
+         padding: 10px
+     }
+.addMessage1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px
+}
+.addMessage1 input {
+    margin-left: 15px;
+}
+.add{
+    margin-left:5px 
+}
+.test{
+    margin-right:65px
+}
+</style>

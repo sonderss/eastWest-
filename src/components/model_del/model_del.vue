@@ -1,0 +1,31 @@
+<template>
+    <div>
+         <Modal
+            :value="modal1"
+            title="确定删除吗？"
+            @on-ok="onOK"
+            @on-cancel="cancel"
+            >
+        </Modal>
+    </div>
+</template>
+<script>
+
+export default {
+    name: 'model_del',
+    props: {
+        modal1:{
+            type: Boolean,
+            default: ''
+        },
+    },
+    methods: {
+       onOK(){
+          this.$emit('del')
+       },
+       cancel(){
+              this.$emit('cancel')
+       }
+    }
+}
+</script>

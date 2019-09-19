@@ -1,0 +1,242 @@
+<template>
+  <div>
+    <div class="but_list">
+      <Button type="primary" @click="add">新增</Button>
+    </div>
+    <Modal width=650 v-model="modal1" :title="title" @on-ok="ok" @on-cancel="cancel">
+        <Form  ref="formCustom" :label-width="80" :model="formItem" :rules="ruleValidate" action="">
+           <FormItem label="SKU" prop="keyinput">
+             <Input ref="inputtxt" v-model="formItem.keyinput" placeholder="请填写key名称"></Input>
+           </FormItem>
+           <FormItem label="简称" prop="nameinput">
+             <Input ref="inputtxt" v-model="formItem.nameinput" placeholder="请填写名称"></Input>
+           </FormItem>
+           <FormItem label="规格" prop="eninput">
+             <Input ref="inputtxt" v-model="formItem.eninput" placeholder="请填写英文名称"></Input>
+           </FormItem>
+        </Form>
+    </Modal>
+    <Modal
+            v-model="modal2"
+            title="删除操作"
+            @on-ok="okdel"
+            @on-cancel="cancel">
+            <p style="font-size: 18px;text-align: center;">确定删除吗?</p>
+    </Modal>
+	<Modal width=650 v-model="modal3" :title="title" @on-ok="ok" @on-cancel="cancel">
+
+	</Modal>
+    <div class="search">
+      <span>搜索</span>
+      <input type="text" placeholder="请输入关键字" />
+      <Button type="primary">快速查询</Button>
+    </div>
+    <Table border :columns="columns1" :data="data1">
+      <template slot-scope="{row,index}" slot="action">
+         <Button class="btn" type="primary" size="small" style="margin-right: 5px;background: mediumpurple; border-color: mediumpurple;" @click="updeta(index)">修改</Button>
+         <Button type="error" size="small" @click="remove(index)">删除</Button>
+      </template>
+    </Table>
+    <div class="page"><Page :total="page_total" /></div>
+
+    <Tabs type="card" value="name1">
+      <TabPane label="扩展属性" name="name1">
+        <div style="border: none;" class="but_list">
+          <Button type="primary" @click="shopset">商品设置</Button>
+        </div>
+        <Table border :columns="columns2"></Table>
+        </TabPane>
+    </Tabs>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'goodsrecom',
+  data () {
+    return {
+      page_total: 100,
+      modal1: false,
+      modal2: false,
+      title: '',
+      tip: '',
+      flag: true,
+      num: 0,
+      formItem: {
+        keyinput: '',
+        nameinput: '',
+        eninput: ''
+      },
+      ruleValidate: {
+        keyinput: [
+          { required: true, message: 'SKU不能为空', trigger: 'blur' }
+        ],
+        nameinput: [
+          { required: true, message: '简称不能为空', trigger: 'blur' }
+        ],
+        eninput: [
+          { required: true, message: '规格不能为空', trigger: 'blur' }
+        ]
+      },
+      columns2: [
+        {
+          title: 'SKU',
+          key: 'sku'
+        },
+        {
+          title: '简称',
+          key: 'name'
+        },
+        {
+          title: '售价',
+          key: 'price'
+        },
+        {
+          title: '状态',
+          key: 'states'
+        }
+      ],
+      columns1: [
+        {
+          title: 'Key名称',
+          key: 'key'
+        },
+        {
+          title: '名称',
+          key: 'name'
+        },
+        {
+          title: '英文名称',
+          key: 'ename'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 150,
+          align: 'center'
+        }
+      ],
+      data1: [
+        {
+          key: 'Recommend',
+          name: '推荐商品',
+          ename: 'Recommend Goods'
+        },
+        {
+          key: 'HotSale',
+          name: '热销商品',
+          ename: 'Hot Sale'
+        },
+        {
+          key: 'abc',
+          name: 'abc画派',
+          ename: 'a3223'
+        }
+      ]
+    }
+  },
+  methods: {
+    add () {
+      this.title = '新增操作'
+      this.$refs.formCustom.resetFields()
+      this.modal1 = true
+      this.tip = '添加成功'
+    },
+    updeta (index) {
+      this.title = '修改操作'
+      this.modal1 = true
+      this.$refs.formCustom.resetFields()
+      this.formItem.keyinput = this.data1[index].key
+      this.formItem.nameinput = this.data1[index].name
+      this.formItem.eninput = this.data1[index].ename
+      this.tip = '修改成功'
+      this.num = index
+      this.flag = false
+    },
+    remove (index) {
+      this.modal2 = true
+      this.num = index
+    },
+    okdel () {
+      this.data1.splice(this.num, 1)
+      this.$Message.success('删除成功')
+    },
+    ok () {
+      this.$refs.formCustom.validate(res => {
+        if (this.flag) {
+          if (res) {
+            this.$Message.success(this.tip)
+            let obj = {
+              key: this.formItem.keyinput,
+              name: this.formItem.nameinput,
+              ename: this.formItem.eninput
+            }
+            this.data1.push(obj)
+
+          } else {
+            this.$Message.error('操作失败')
+          }
+        } else {
+          if (res) {
+            this.$Message.success(this.tip)
+            this.data1[this.num].key = this.formItem.keyinput
+            this.data1[this.num].name = this.formItem.nameinput
+            this.data1[this.num].ename = this.formItem.eninput
+
+          } else {
+            this.$Message.error('操作失败')
+          }
+        }
+      })
+      this.flag = true
+    },
+    cancel () {
+
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+.btn:hover{
+  opacity: 0.8;
+}
+.page {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.but_list {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px dashed #dedede;
+  padding-bottom: 10px;
+  button {
+    margin: 0 2px;
+  }
+}
+.search {
+  span {
+    font-size: 15px;
+  }
+  margin: 15px 0;
+  input {
+    margin: 0 20px;
+    padding: 5px;
+  }
+}
+.list{
+
+  li{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px 0;
+    span{
+      display: inline;
+      width: 50px;
+      margin-right: 20px;
+    }
+  }
+}
+</style>

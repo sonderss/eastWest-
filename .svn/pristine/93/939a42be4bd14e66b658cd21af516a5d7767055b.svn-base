@@ -1,0 +1,191 @@
+<template>
+    <div>
+        <div class="demo-split">
+           
+                <div slot="top" class="demo-split-pane">
+                    <div class="btn">
+                         <Button type="warning" @click="remove(index)">删除</Button>
+                           <Button type="success">修改</Button>
+                        <Button type="primary" @click="add()">新增</Button>
+                     </div>
+                </div> 
+        </div>
+            <div slot="bottom" class="pane">
+               搜索     <Input v-model="keywords" placeholder="Enter something..." style="width: 300px" />  <Button type="primary" @click="search1(keywords)">搜索</Button>
+            </div>
+        <div>
+            <Table :columns="columns1" :data="list" border highlight-row @on-row-click="getData"></Table>
+        </div>
+         <Tabs type="card" class="user_table" style="margin-top:240px">
+            <TabPane label="成员列表">
+                 <Table border :columns="columns2" :data="data1"></Table>
+            </TabPane>
+            <TabPane label="菜单权限">标签二的内容</TabPane>
+        </Tabs>
+    </div>
+</template>
+
+<script>
+import axios from 'axios'
+export default {
+        data() {
+            return {
+                total:20,
+                pageSize:5, //每页条数
+                list:[],
+                keywords:'',
+                pageNo:1,
+                value1:'',
+                columns1: [
+                    {
+                        title: '角色名称',
+                        key: 'roleName',
+                        width:200
+                    },
+                    {
+                        title: '描述信息',
+                        key: 'desc'
+                    }
+         
+                ],
+                columns2: [
+                    {
+                        title: '工号',
+                        key: 'id'
+                    },
+                    {
+                        title: '姓名',
+                        key: 'name'
+                    },
+                    {
+                        title: '账号名',
+                        key: 'username'
+                    }
+                ],
+                data1: []
+            }
+    
+         
+       },
+       mounted() {
+            this.list = [{
+                roleName:'默认角色',
+                desc:'所有成员默认拥有角色',
+                id:1,
+                name:'周星驰',
+                username:'sonder'
+             },
+             {
+                roleName:'网站管理员',
+                desc:'除了系统管理啥都不做',
+                id:2,
+                name:'速洋网络',
+                username:'速洋'
+             },
+             {
+                roleName:'网站业务',
+                desc:'负责业务相关的功能',
+                id:3,
+                name:'曾小贤',
+                username:'123'
+             }
+            ]
+       },
+       methods: {
+           add(){
+               this.$Modal.confirm({
+                    render: (h) => {
+                        return h('Input', {
+                            props: {
+                                value: this.value1,
+                                autofocus: true,
+                                placeholder: 'Please enter your name...'
+                            },
+                            on: {
+                                input: (val) => {
+                                    this.value1 = val;
+                                }
+                            }
+                        })
+                    }
+                })
+           },
+           search(keywords){
+               return this.list.filter(item =>{
+                   if(item.roleName.includes(keywords)){
+                       return item
+                   }
+               })
+           },
+           search1(keywords){
+                var arr = this.search(keywords)
+                this.list = arr
+                if(!keywords){
+                        this.list = [{
+                         roleName:'默认角色',
+                        desc:'所有成员默认拥有角色',
+                        id:1,
+                        name:'周星驰',
+                        username:'sonder'
+                    },
+                    {
+                        roleName:'网站管理员',
+                        desc:'除了系统管理啥都不做',
+                        id:2,
+                        name:'速洋网络',
+                        username:'速洋'
+                    },
+                    {
+                        roleName:'网站业务',
+                        desc:'负责业务相关的功能',
+                        id:3,
+                        name:'曾小贤',
+                        username:'123'
+                    }]
+                }
+           },
+           getData(data,index){
+              // console.log(data,index)
+               var obj ={
+                   id:data.id,
+                   name:data.name,
+                   username:data.username
+               }
+               this.data1 = []
+               this.data1.push(obj)
+               console.log(obj)
+              
+               
+           }
+       },
+}
+</script>
+
+<style  scoped>
+   .demo-split{
+        height: 50px;
+        border: 1px solid #dcdee2;
+    }
+    .demo-split-pane{
+        padding: 10px;
+
+    }
+    .btn{
+        width: 50%;
+        float: right;
+    }
+     .btn button{
+         float: right;
+         margin: 0 6px
+     }
+     .search {
+         width: 100px;
+     }
+     .pane{
+         width: 100%;
+         height: 50px;
+         border: 1px solid #dcdee2;
+         padding: 10px
+     }
+    
+</style>

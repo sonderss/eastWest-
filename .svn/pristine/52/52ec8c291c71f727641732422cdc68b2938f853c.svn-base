@@ -1,0 +1,348 @@
+<template>
+    <div>
+        <div class="demo-split">
+           
+                <div slot="top" class="demo-split-pane">
+                    <div class="btn">
+                         <Button type="warning" @click="remove1(index)">删除</Button>
+                        <Button type="primary" @click="add(index)">新增</Button>
+                     </div>
+                </div> 
+        </div>
+            <div slot="bottom" class="pane">
+               搜索     <Input v-model="keywords" placeholder="请输入姓名关键词进行搜索..." style="width: 300px" />  <Button type="primary" @click="search1(keywords)">搜索</Button>
+            </div>
+        <div>
+            <Table :columns="columns1" :data="list" border highlight-row @on-row-click="getData"></Table>
+        </div>
+         <Tabs type="card" class="user_table" style="margin-top:240px">
+            <TabPane label="成员列表">
+                 <Table border :columns="columns2" :data="data1" ></Table>
+            </TabPane>
+            <TabPane label="菜单权限">菜单权限</TabPane>
+        </Tabs>
+        <model_del :modal1="modal1"  @cancel="cancel" @del="okDel(index)"></model_del>
+         <Modal
+            v-model="modal0"
+            title="增加"
+            @on-ok="addMessage(index)"
+            @on-cancel="back">
+            <div class="mo">
+            工号：<input v-model="value1" placeholder="请输入工号" />
+            姓名：<input v-model="value2" placeholder="请输入姓名" />
+            账号名：<input v-model="value3" placeholder="请输入账号名" />
+            </div>
+           
+        </Modal>
+        <!-- 取消用户权限确认 -->
+        <Modal v-model="modal2" width="360">
+            <p slot="header" style="color:#f60;text-align:center">
+                <Icon type="ios-information-circle"></Icon>
+                <span>取消该用户对应的权限</span>
+            </p>
+            <div style="text-align:center">
+                <p>取消后，该用户的权限被收回，可能会影响正常使用</p>
+                <p>are you sure?</p>
+            </div>
+            <div slot="footer">
+                <Button type="error" size="large" long  @click.stop="sureDel(index,index1)">确认</Button>
+            </div>
+        </Modal>
+    </div>
+</template>
+
+<script>
+import axios from 'axios'
+import model_del from '../../components/model_del/model_del.vue'
+export default {
+        components:{model_del},
+        data() {
+            return {
+                total:20,
+                pageSize:5, //每页条数
+                list:[],
+                keywords:'',
+                pageNo:1,
+                value1:'',
+                value2:'',
+                value3:'',
+                modal1:false,
+                modal0:false,
+                modal2:false,
+                index:'',
+                index1:'',//大项里的某项
+                columns1: [
+                    {
+                        title: '角色名称',
+                        key: 'roleName',
+                        width:200
+                    },
+                    {
+                        title: '描述信息',
+                        key: 'desc'
+                    }
+         
+                ],
+                columns2: [
+                    {
+                        title: '工号',
+                        key: 'id'
+                    },
+                    {
+                        title: '姓名',
+                        key: 'name'
+                    },
+                    {
+                        title: '账号名',
+                        key: 'username'
+                    },
+                    {
+                        title:'操作',
+                        render: (h, params) => {
+                            return h('div', [
+                                // h('Button', {
+                                //     props: {
+                                //         type: 'primary',
+                                //         size: 'small'
+                                //     },
+                                //     style: {
+                                //         marginRight: '5px'
+                                //     },
+                                //     on: {
+                                //         click: () => {
+                                //             this.show(params.index)
+                                //         }
+                                //     }
+                                // }, 'View'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.delete(params.index)
+                                        }
+                                    }
+                                }, '取消该用户权限')
+                            ]);
+                        }
+                    }
+                ],
+                data1: []
+            }
+    
+         
+       },
+       mounted() {
+            this.list = [{
+                roleName:'默认角色',
+                desc:'所有成员默认拥有角色',
+                arr:[{  
+                id:1,
+                name:'周星驰',
+                username:'sonder'
+                },{  
+                id:2,
+                name:'梁朝伟',
+                username:'sonder'
+                }]
+             },
+             {
+                roleName:'网站管理员',
+                desc:'除了系统管理啥都不做',
+                arr:[{id:2,
+                name:'速洋网络',
+                username:'速洋'}]
+                
+                
+               
+             },
+             {
+                roleName:'网站业务',
+                desc:'负责业务相关的功能',
+                arr:[{
+                id:3,
+                name:'曾小贤',
+                username:'123'
+                }]
+             }
+            ]
+       },
+       methods: {
+           add(index){
+               if(typeof(index) == 'number'){
+                    this.modal0 = true
+               }else{
+                   alert('请选择一项进行操作')
+               }
+             
+           },
+           search(keywords){
+               var brr = []
+               for(var i in this.list){
+                   //console.log(this.list[i].arr)
+                   brr = brr.concat(this.list[i].arr)
+               }
+               //console.log(brr)
+               return brr.filter(item =>{
+                   if(item.name.includes(keywords)){
+                       return item
+                   }
+               })
+           },
+           search1(keywords){
+                var arr = this.search(keywords)
+               // console.log(arr)
+                this.data1 = arr
+                if(!keywords){
+                        this.data1 = [] //返回之前，先把之前搜到结果为空
+                        this.list = [{
+                        roleName:'默认角色',
+                        desc:'所有成员默认拥有角色',
+                        arr:[{  
+                            id:1,
+                            name:'周星驰',
+                            username:'sonder'
+                        },{  
+                        id:2,
+                        name:'梁朝伟',
+                        username:'sonder'
+                        }]
+                    },
+                    {
+                        roleName:'网站管理员',
+                        desc:'除了系统管理啥都不做',
+                        arr:[{id:2,
+                        name:'速洋网络',
+                        username:'速洋'
+                        }]
+                
+                    },
+                    {
+                        roleName:'网站业务',
+                        desc:'负责业务相关的功能',
+                        arr:[{
+                        id:3,
+                        name:'曾小贤',
+                        username:'123'
+                        }]
+                    }]
+                }
+           },
+           getData(data,index){
+           
+            this.data1 = []
+         
+            for(var i in data.arr){
+                this.data1.push(data.arr[i])
+            }
+              this.index = index
+           },
+           remove1(index){
+              if(typeof(index) == 'number'){
+                 this.modal1 = true
+              }else{
+                  alert('请选择一项进行删除')
+              }
+           },
+           okDel(index){
+               this.list.splice(index,1)
+               this.modal1 = false
+               this.data1 = []
+           },
+           cancel(){
+              
+               this.modal1 = false
+           },
+           //模态 确定按钮
+           addMessage(index){
+               var that = this
+               if(this.value1 && this.value2 && this.value3){
+                    var obj ={
+                        id:this.value1,
+                        name:this.value2,
+                        username:this.value3
+                    }
+                    this.list[index].arr.push(obj)
+                    //console.log( this.list[index].arr)
+                    this.data1.push(obj)
+               }else{
+                   alert('您没有输入完整信息')
+                 
+               }
+               //this.index = ''
+               this.value1 = ''
+               this.value2 = ''
+               this.value3 = ''
+               
+           },
+           //模态 取消按钮
+           back(){
+               this.modal0 = false
+               this.index = ''
+               this.value1 = ''
+               this.value2 = ''
+               this.value3 = ''
+           },
+           //弹出确认对话框
+           delete(ind){
+               this.index1 = ind
+               this.modal2 = true
+              // this.data1.splice(index,1)
+              console.log(this.index1)
+              
+               
+           },
+           //确认删除  
+           sureDel(index,index1){
+               console.log(index,index1)
+               console.log(this.data1)
+               this.data1.splice(index1,1)
+               this.list[index].arr.splice(index1,1)  
+               this.modal2 = false
+            //     // this.index = ''
+            //     // this.index1 = ''
+            //     console.log(index)
+             //console.log('jige ')
+             console.log(this.list[index].arr)
+           }
+       },
+}
+</script>
+
+<style  scoped>
+   .demo-split{
+        height: 50px;
+        border: 1px solid #dcdee2;
+    }
+    .demo-split-pane{
+        padding: 10px;
+
+    }
+    .btn{
+        width: 50%;
+        float: right;
+    }
+     .btn button{
+         float: right;
+         margin: 0 6px
+     }
+     .search {
+         width: 100px;
+     }
+     .pane{
+         width: 100%;
+         height: 50px;
+         border: 1px solid #dcdee2;
+         padding: 10px
+     }
+    
+</style>
+
+<style  scoped>
+.mo{
+    display: flex;
+    flex-direction: column
+}
+</style>

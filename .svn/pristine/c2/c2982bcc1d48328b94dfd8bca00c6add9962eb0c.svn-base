@@ -1,0 +1,190 @@
+<template>
+  <div>
+    <div class="but_list">
+      <Button type="primary" @click="add">新增</Button>
+    </div>
+    <Modal v-model="modal1" title="新增操作" @on-ok="ok" @on-cancel="cancel">
+
+    </Modal>
+    <div class="search">
+      <span>搜索</span>
+      <input type="text" placeholder="请输入关键字" />
+      <Button type="primary">快速查询</Button>
+    </div>
+    <Table border :columns="columns1" :data="data1">
+        <template slot-scope='{row,index}' slot="action">
+            <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+            <Button  type="error" size="small" @click="remove(index)">删除</Button>
+            <Button class="btn" type="primary" size="small" style="margin:0 6px;background: gray; border-color: gray;">注销</Button>
+            <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: seagreen; border-color: seagreen;">启用</Button>
+        </template>
+    </Table>
+    <div class="page"><Page :total="page_total" /></div>
+
+    <Tabs type="card" value="name1">
+      <TabPane label="扩展属性" name="name1">
+        <div style="border: none;" class="but_list">
+          <Button type="primary">新增</Button>
+        </div>
+        <Table border :columns="columns2" :data="data2">
+          <template slot-scope='{row,index}' slot="actions" >
+            <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;">修改</Button>
+            <Button  type="error" size="small" @click="remove(index)">删除</Button>
+            <Button class="btn" type="primary" size="small" style="margin:0 6px;background: seagreen; border-color: seagreen;">注销</Button>
+            <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: gray; border-color: gray;">启用</Button>
+            <Button class="btn" type="primary" size="small" style="margin-right: 6px;background: mediumpurple; border-color: mediumpurple;">排序</Button>
+          </template>
+          </Table>
+        </TabPane>
+    </Tabs>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'goodstype',
+  data () {
+    return {
+      page_total: 100,
+      modal1: false,
+      columns2: [
+        {
+          title: '属性名称',
+          key: 'exten_name'
+        },
+        {
+          title: '属性KEY',
+          key: 'file_size'
+        },
+        {
+          title: '检索属性',
+          key: 'height'
+        },
+        {
+          title: '属性是否可选',
+          key: 'width'
+        },
+        {
+          title: '录入方式',
+          key: 'time'
+        },
+        {
+          title: '可选值',
+          key: 'change'
+        },
+        {
+          title: '状态',
+          key: 'states'
+        },
+        {
+          title: '操作',
+          slot: 'actions',
+          width: 280,
+          align: 'center'
+        }
+      ],
+      columns1: [
+        {
+          title: '类型名称',
+          key: 'sku'
+        },
+        {
+          title: '备注信息',
+          key: 'name'
+        },
+        {
+          title: '状态',
+          key: 'state'
+        },
+        {
+          title: '创建人',
+          key: 'people'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 230,
+          align: 'center'
+        }
+      ],
+      data1: [
+        {
+          sku: 'Oil painting',
+          name: 'Oil painting',
+          state: '启用',
+          people: '何剑锋'
+        }
+      ],
+      data2: [
+        {
+          exten_name: 'Oil painting',
+          file_size: 'Oil painting',
+          height: '启用',
+          width: '何剑锋',
+          time: '何剑锋',
+          change: '何剑锋',
+          states: 'dfaaf'
+        }
+      ]
+    }
+  },
+  methods: {
+    add () {
+      this.modal1 = true
+    },
+    ok(){
+
+    },
+    cancel(){
+
+    },
+    remove (index) {
+      this.data1.splice(index, 1)
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+.btn:hover{
+  opacity: 0.8;
+}
+.page {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.but_list {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px dashed #dedede;
+  padding-bottom: 10px;
+  button {
+    margin: 0 2px;
+  }
+}
+.search {
+  span {
+    font-size: 15px;
+  }
+  margin: 15px 0;
+  input {
+    margin: 0 20px;
+    padding: 5px;
+  }
+}
+.list{
+
+  li{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px 0;
+    span{
+      display: inline;
+      width: 50px;
+      margin-right: 20px;
+    }
+  }
+}
+</style>

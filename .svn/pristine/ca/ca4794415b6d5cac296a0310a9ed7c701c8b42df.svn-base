@@ -1,0 +1,11 @@
+import Mock from 'mockjs'
+var data = Mock.mock({
+    'list|10-20':[{
+        'id':'@word(10,15)',
+        'title':'@csentence(3,6)',
+        'name':'@cname()',
+        'desc':'@csentence()'
+    }]
+})
+
+Mock.mock('http://www.baidu.com/emil',data)

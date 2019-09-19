@@ -1,0 +1,432 @@
+<template>
+  <div>
+    <div class="topBody">
+      <Input v-model="something" style="width: 160px;margin-right: 10px" placeholder="请输入关键字"/>
+      <Button type="primary" icon="ios-search">搜索</Button>
+
+      <Button style="float: right;" type="primary" icon="ios-add" @click="addBus">新增</Button>
+    </div>
+    <div class="tableText">
+      <Table @on-row-click="edTable" :loading="loading" :columns="columns" :data="newList" border/>
+      <Page align="right" :total="100" show-sizer show-elevator @on-change="pageChange" style="margin-top: 10px"
+            @on-page-size-change="PageSizeChange"></Page>
+    </div>
+    <Modal
+      :title="modalTitle"
+      v-model="handleModal"
+      draggable
+      :footer-hide="true"
+      :mask-closable="true"
+      @on-visible-change="handleReset('formValidate')"
+    >
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <FormItem label="Key名称" prop="key_name">
+          <Input v-model="formValidate.key_name" placeholder="请输入key名称"></Input>
+        </FormItem>
+        <FormItem label="名称" prop="name">
+          <Input v-model="formValidate.name" placeholder="请输入名称"></Input>
+        </FormItem>
+        <FormItem label="英文名称" prop="english_name">
+          <Input v-model="formValidate.english_name" placeholder="请输入英文名称"></Input>
+        </FormItem>
+        <div align="center">
+          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+          <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+        </div>
+      </Form>
+    </Modal>
+    <div class="footer">
+      <div>
+        <Tabs type="card">
+          <TabPane label="商品列表" :value="1" name="商品列表">
+            <div style="border: none;" class="but_list">
+              <Button type="warning" @click="goodsSet">商品设置</Button>
+            </div>
+            <Table :loading="loading" :columns="oddDetail" :data="fList" border/>
+          </TabPane>
+        </Tabs>
+      </div>
+    </div>
+
+    <Modal
+      :title="goodsSetTitle"
+      v-model="goodsSetModal"
+      draggable
+      :footer-hide="true"
+      :mask-closable="true"
+      @on-visible-change="handleReset('formValidate')"
+    >
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <!--<FormItem label="搜索" prop="kw">-->
+        <!--<Input v-model="something" style="width: 160px;margin-right: 10px" placeholder="请输入关键字"/>-->
+        <!--<Button type="primary" icon="ios-search">搜索</Button>-->
+        <!--</FormItem>-->
+        <Transfer
+          :data="data"
+          :target-keys="targetKeys"
+          filterable
+          :filter-method="filterMethod"
+          @change="handleChange2"></Transfer>
+        <!--<div align="center">-->
+        <!--<Button type="primary" @click="handleSubmit('formValidate')">提交</Button>-->
+        <!--<Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>-->
+        <!--</div>-->
+      </Form>
+    </Modal>
+  </div>
+</template>
+<script>
+
+  export default {
+    name: 'base_unit',
+    data () {
+      return {
+        data: [
+          { label: '1', key: 1 },
+          { label: '2', key: 2 },
+          { label: '3', key: 3 },
+          { label: '4', key: 4 },
+          { label: '5', key: 5 },
+          { label: '6', key: 6 },
+          { label: '7', key: 7 }
+        ],
+        targetKeys:[
+          { label: '8', key: 8 },
+          { label: '9', key: 9 },
+          { label: '10', key: 10 },
+          { label: '11', key: 11 },
+          { label: '12', key: 12 }
+        ],
+        // data2: this.getMockData(),
+        // targetKeys2: this.getTargetKeys(),
+        handleModal: false,
+        goodsSetModal: false,
+        loading: true,
+        modalTitle: '',
+        goodsSetTitle: '',
+        newList: [],
+        fList: [],
+        companyName: '',
+        formValidate: {
+          name: '',
+          key_name: '',
+          english_name: ''
+        },
+        something: '',
+        ruleValidate: {
+          name: [{ required: true, message: '名称不能为空', trigger: 'change' }],
+          key_name: [{ required: true, message: 'key名称不能为空', trigger: 'change' }],
+          english_name: [{ required: true, message: '英文名称不能为空', trigger: 'change' }]
+        },
+        params: {
+          page: 1,
+          limit: 10
+        },
+        columns: [
+          {
+            title: 'Key名称',
+            align: 'center',
+            key: 'key_name'
+          },
+          {
+            title: '名称',
+            align: 'center',
+            key: 'name'
+          },
+          {
+            title: '英文名称',
+            align: 'center',
+            key: 'english_name'
+          },
+          {
+            title: '操作',
+            key: 'action',
+            width: 150,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h(
+                  'Button',
+                  {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.editBus(params.row, params.index)
+                      }
+                    }
+                  },
+                  '修改'
+                ),
+                h(
+                  'Button',
+                  {
+                    props: {
+                      type: 'error',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.remove(params.row, params.index)
+                      }
+                    }
+                  },
+                  '删除'
+                )
+              ])
+            }
+          }
+        ],
+        tableData: [
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          },
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          },
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          },
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          },
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          },
+          {
+            name: '曾厉害',
+            key_name: 'k曾厉害',
+            english_name: 'edith'
+          }
+        ],
+        oddDetail: [
+          {
+            title: 'SKU',
+            align: 'center',
+            key: 'SKU'
+          },
+          {
+            title: '简称',
+            align: 'center',
+            key: 'ShortlName'
+          },
+          {
+            title: '售价',
+            align: 'center',
+            key: 'Price'
+          },
+          {
+            title: '状态',
+            align: 'center',
+            key: 'Status'
+          }
+        ],
+        footerData: [
+          {
+            Identifier: '0f4ebcf21c7e4be39bb098d295275423',
+            Price: '$341.00',
+            SKU: 'OPT0093',
+            ShortlName: 'New York',
+            Status: '下架'
+          },
+          {
+            Identifier: '0f4ebcf21c7e4be39bb098d295275423',
+            Price: '$341.00',
+            SKU: 'OPT0093',
+            ShortlName: 'New York',
+            Status: '下架'
+          },
+          {
+            Identifier: '0f4ebcf21c7e4be39bb098d295275423',
+            Price: '$341.00',
+            SKU: 'OPT0093',
+            ShortlName: 'New York',
+            Status: '下架'
+          }
+        ]
+        // data2: this.getMockData(),
+        // targetKeys2: this.getTargetKeys()
+      }
+    },
+    methods: {
+      tabs (index) {
+        console.log(index)
+      },
+      PageSizeChange (limit) {
+        this.params.limit = limit
+      },
+      pageChange (page) {
+        this.params.page = page
+      },
+      edTable (row, index) {
+        console.log(row)
+        this.fList = this.footerData
+      },
+      goodsSet () {
+        this.goodsSetModal = true
+        this.goodsSetTitle = '设置推荐商品'
+      },
+      search () {
+        let len = this.tableData
+        let arr = []
+        for (let i in len) {
+          if (len[i].name === this.companyName) {
+            arr.push(len[i])
+          } else if (this.companyName === '') {
+            this.newList = this.tableData
+            return
+          }
+        }
+        this.newList = arr
+      },
+      addBus () {
+        this.handleModal = true
+        this.modalTitle = '新增'
+      },
+
+      editBus (item, index) {
+        this.handleModal = true
+        this.modalTitle = '修改'
+        this.itemIndex = index
+        this.formValidate = JSON.parse(JSON.stringify(item))
+      },
+
+      handleSubmit (name) {
+        this.$refs[name].validate(valid => {
+          if (valid) {
+            let params = JSON.parse(JSON.stringify(this.formValidate))
+            if (this.modalTitle === '新增') {
+              this.$Message.success('新增成功!')
+              this.newList.unshift(params)
+            } else {
+              this.$set(this.newList, this.itemIndex, params)
+              this.$Message.success('修改成功!')
+            }
+            this.handleModal = false
+          } else {
+            if (this.modalTitle === '新增') {
+              this.$Message.error('新增失败!')
+            } else {
+              this.$Message.error('修改失败!')
+            }
+          }
+        })
+      },
+      handleReset (name) {
+        this.$refs[name].resetFields()
+      },
+      remove (index) {
+        this.$Modal.warning({
+          title: '提示',
+          content: '确定要删除这条数据吗？',
+          onOk: () => {
+            this.newList.splice(index, 1)
+          }
+        })
+      }
+    },
+    mounted () {
+      this.newList = this.tableData
+      // this.getMockData()
+      // this.getTargetKeys()
+      setTimeout(() => {
+        this.loading = false
+      }, 1000)
+    },
+    getMockData () {
+      let mockData = []
+      for (let i = 1; i <= 20; i++) {
+        mockData.push({
+          key: i.toString(),
+          label: 'Content ' + i,
+          description: 'The desc of content  ' + i,
+          disabled: Math.random() * 3 < 1
+        })
+      }
+      console.log(mockData)
+      return mockData
+    },
+    getTargetKeys () {
+      return this.getMockData()
+        .filter(() => Math.random() * 2 > 1)
+        .map(item => item.key)
+    },
+    handleChange2 (newTargetKeys) {
+      console.log(newTargetKeys)
+      this.targetKeys2 = newTargetKeys
+    },
+    filterMethod (data, query) {
+      return data.label.indexOf(query) > -1
+    }
+  }
+</script>
+
+<style>
+  .handle-box {
+    text-align: right;
+    margin-bottom: 10px;
+  }
+
+  .topBody {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 10px;
+  }
+
+  .tableText {
+    width: 100%;
+  }
+
+  .mleft {
+    margin-left: 10px;
+  }
+
+  .search-btn {
+    float: right;
+    margin-right: 10px;
+  }
+
+  .input-label {
+    display: inline-block;
+    line-height: 16px;
+    margin-right: 15px;
+    font-size: 16px;
+  }
+
+  .search {
+    width: 230px;
+  }
+
+  .but {
+    margin-right: 5px;
+  }
+
+  .but_list {
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px dashed #dedede;
+    padding-bottom: 10px;
+  }
+
+  .but_list button {
+    margin: 0 2px;
+  }
+</style>

@@ -1,0 +1,824 @@
+<template>
+  <div>
+    <div class="topBody">
+      <Tabs type="card" @change="test">
+        <TabPane v-for="item in titleList" :key="item.title" :label="item.title + '(' + item.num + ')' " :value="1" :name="item.title" @click="tabs(index)"></TabPane>
+      </Tabs>
+      <div>
+        <Input v-model="something" style="width: 160px;margin-right: 10px" :placeholder="$t('inputKey')"/>
+        <Button @click="search" type="primary" icon="ios-search">{{$t('search')}}</Button>
+      </div>
+    </div>
+    <div class="tableText">
+      <Table @on-row-click="edTable" :loading="loading" :columns="columns" :data="newList" border/>
+      <Page align="right" :total="100" show-sizer show-elevator @on-change="pageChange" style="margin-top: 10px"
+            @on-page-size-change="PageSizeChange"></Page>
+    </div>
+    <Modal
+      :title="modalTitle"
+      v-model="handleModal"
+      :width="700"
+      draggable
+      :footer-hide="true"
+      :mask-closable="true"
+      @on-visible-change="handleReset('formValidate')"
+    >
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <Row>
+          <i-col span="12">
+            <FormItem label="订单号:">
+              <span>{{formValidate.odd_num}}</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem label="SKU:">
+              <span>OPT0094</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.goodsName') + ':'">
+              <span>Time Square</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.weight') + ':'">
+              <span>{{formValidate.weight}}</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.bulk') + ':'">
+              <span>{{formValidate.bulk}}</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.price') + ':'" prop="name">
+              <Input style="width: 100px" v-model="formValidate.name" :placeholder="$t('table.pleaseEnter') + $t('table.price')"></Input>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.num') + ':'">
+              <span>{{formValidate.num}}</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.money') + ':'">
+              <span>{{formValidate.odd_money}}</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.goodsTotal') + ':'">
+              <span>111</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.takeAddress') + ':'">
+              <span>111</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.freight') + ':'" prop="freight">
+              <Input v-model="formValidate.freight" :placeholder="$t('table.pleaseEnter') + $t('table.freight')" style="width: 100px"></Input>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.oddBulk') + ':'">
+              <span>{{formValidate.bulk}}</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem :label="$t('table.oddWeight') + ':'">
+              <span>{{formValidate.weight}}</span>
+            </FormItem>
+          </i-col>
+          <i-col span="12">
+            <FormItem :label="$t('table.taxes') + ':'" prop="tax">
+              <Input v-model="formValidate.tax" :placeholder="$t('table.pleaseEnter') + $t('table.taxes')" style="width: 100px"></Input>
+            </FormItem>
+          </i-col>
+        </Row>
+        <FormItem :label="$t('table.billAddress') + ':'">
+          <span>sfsdf</span>
+        </FormItem>
+        <div align="center">
+          <Button type="primary" @click="handleSubmit('formValidate')">{{$t('formButton.submit')}}</Button>
+          <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('formButton.reset')}}</Button>
+        </div>
+      </Form>
+    </Modal>
+    <div class="footer" style="padding-top: 30px;">
+      <div>
+        <Tabs type="card">
+          <TabPane v-for="(item,index) in footerName" :key="item.name" :label="item.name" :value="1" :name="item.name">
+            <Table v-if="index === 0" :loading="loading" :columns="oddDetail" :data="fList" border/>
+            <Table  v-if="index === 1" :loading="loading" :columns="takeContact" :data="fList2" border/>
+            <Table  v-if="index === 2" :loading="loading" :columns="billContact" :data="fList3" border/>
+            <Table  v-if="index === 3" :loading="loading" :columns="payRecord" :data="fList4" border/>
+            <Table  v-if="index === 4" :loading="loading" :columns="oddChangeLog" :data="fList5" border/>
+            <Table  v-if="index === 5" :loading="loading" :columns="logistics" :data="fList6" border/>
+          </TabPane>
+        </Tabs>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+
+export default {
+  name: 'base_odd',
+  data () {
+    return {
+      handleModal: false,
+      loading: true,
+      modalTitle: '',
+      newList: [],
+      companyName: '',
+      formValidate: {
+        bulk: '',
+        date: '',
+        email: '',
+        freight: '',
+        member: '',
+        odd_money: '',
+        odd_num: '',
+        odd_status: '',
+        pay_status: '',
+        tax: '',
+        weight: ''
+      },
+      params: {
+        page: 1,
+        limit: 10
+      },
+      something: '',
+      ruleValidate: {
+        freight: [{ required: true, message: '运费不能为空', trigger: 'change' }],
+        tax: [{ required: true, message: '税金不能为空', trigger: 'change' }],
+        name: [{ required: true, message: '单价不能为空', trigger: 'change' }]
+      },
+      // 顶部tabs栏表头数据
+      titleList: [
+        { title: '全部订单', id: 1, num: 12 },
+        { title: '待确认订单', id: 2, num: 6 },
+        { title: '待支付订单', id: 3, num: 9 },
+        { title: '待发货订单', id: 4, num: 45 },
+        { title: '已完成订单', id: 5, num: 2 },
+        { title: '已作废订单', id: 6, num: 3 }
+      ],
+      // table数据
+      columns: [
+        // {
+        //   title: '编号',
+        //   type: 'index',
+        //   width: 80,
+        //   align: 'center'
+        // },
+        {
+          title: '日期时间',
+          align: 'center',
+          key: 'date'
+        },
+        {
+          title: '订单号',
+          align: 'center',
+          width: 120,
+          key: 'odd_num'
+        },
+        {
+          title: '会员',
+          align: 'center',
+          key: 'member'
+        },
+        {
+          title: '电子邮箱',
+          align: 'center',
+          key: 'email'
+        },
+        {
+          title: '重量',
+          align: 'center',
+          key: 'weight'
+        },
+        {
+          title: '体积',
+          align: 'center',
+          key: 'bulk'
+        },
+        {
+          title: '运费',
+          align: 'center',
+          key: 'freight'
+        },
+        {
+          title: '税',
+          align: 'center',
+          key: 'tax'
+        },
+        {
+          title: '订单金额',
+          align: 'center',
+          key: 'odd_money'
+        },
+        {
+          title: '支付状态',
+          align: 'center',
+          key: 'pay_status'
+        },
+        {
+          title: '订单状态',
+          align: 'center',
+          key: 'odd_status'
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: 250,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h(
+                'Button',
+                {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: (e) => {
+                      e.stopPropagation()
+                      this.editBus(params.row, params.index)
+                    }
+                  }
+                },
+                '设置'
+              ),
+              h(
+                'Button',
+                {
+                  props: {
+                    type: 'success',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      // this.editBus(params.row, params.index)
+                    }
+                  }
+                },
+                '发货'
+              ),
+              h(
+                'Button',
+                {
+                  props: {
+                    type: 'warning',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      // this.editBus(params.row, params.index)
+                    }
+                  }
+                },
+                '确认收款'
+              ),
+              h(
+                'Button',
+                {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.index)
+                    }
+                  }
+                },
+                '作废'
+              )
+            ])
+          }
+        }
+      ],
+      oddDetail: [
+        {
+          title: 'SKU',
+          align: 'center',
+          key: 'SKU'
+        },
+        {
+          title: '商品名称',
+          align: 'center',
+          key: 'GoodsName'
+        },
+        {
+          title: '重量',
+          align: 'center',
+          key: 'Weight'
+        },
+        {
+          title: '体积',
+          align: 'center',
+          key: 'Volume'
+        },
+        {
+          title: '单价',
+          align: 'center',
+          key: 'SetUnitPrice'
+        },
+        {
+          title: '数量',
+          align: 'center',
+          key: 'Num'
+        },
+        {
+          title: '金额',
+          align: 'center',
+          key: 'SetSum'
+        }
+      ],
+      takeContact: [
+        {
+          title: '区域',
+          align: 'center',
+          key: 'Address'
+        },
+        {
+          title: '地址',
+          align: 'center',
+          key: 'AddressInfo'
+        },
+        {
+          title: '邮政编码',
+          align: 'center',
+          key: 'Zipcode'
+        },
+        {
+          title: '公司',
+          align: 'center',
+          key: 'Company'
+        },
+        {
+          title: '联系人',
+          align: 'center',
+          key: 'FullName'
+        },
+        {
+          title: '电话',
+          align: 'center',
+          key: 'Phone'
+        },
+        {
+          title: '备注',
+          align: 'center',
+          key: 'Memo'
+        }
+      ],
+      billContact: [
+      //   Address: 'Afghanistan',
+      // AddressInfo: '3123',
+      // Company: '21',
+      // FullName: '131',
+      // Memo: '',
+      // Phone: '21',
+      // Zipcode: '12313'
+        {
+          title: '区域',
+          align: 'center',
+          key: 'Address'
+        },
+        {
+          title: '地址',
+          align: 'center',
+          key: 'AddressInfo'
+        },
+        {
+          title: '邮政编码',
+          align: 'center',
+          key: 'Zipcode'
+        },
+        {
+          title: '公司',
+          align: 'center',
+          key: 'Company'
+        },
+        {
+          title: '联系人',
+          align: 'center',
+          key: 'FullName'
+        },
+        {
+          title: '电话',
+          align: 'center',
+          key: 'Phone'
+        },
+        {
+          title: '备注',
+          align: 'center',
+          key: 'Memo'
+        }
+      ],
+      payRecord: [
+        {
+          title: '流水号',
+          align: 'center',
+          key: 'date'
+        },
+        {
+          title: '支付金额',
+          align: 'center',
+          key: 'date'
+        },
+        {
+          title: '日期时间',
+          align: 'center',
+          key: 'date'
+        }
+      ],
+      oddChangeLog: [
+        {
+          title: '日期时间',
+          align: 'center',
+          key: 'AddTime'
+        },
+        {
+          title: '订单状态',
+          align: 'center',
+          key: 'Memo'
+        },
+        {
+          title: '操作人',
+          align: 'center',
+          key: 'OPTId'
+        },
+        {
+          title: '备注',
+          align: 'center',
+          key: 'Status'
+        }
+      ],
+      logistics: [
+        {
+          title: '物流公司',
+          align: 'center',
+          key: 'date'
+        },
+        {
+          title: '运单号',
+          align: 'center',
+          key: 'date'
+        },
+        {
+          title: '时间日期',
+          align: 'center',
+          key: 'date'
+        }
+      ],
+      tableData: [
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987986',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987985',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987984',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        },
+        {
+          date: '2019-9-10',
+          odd_num: '87987987987',
+          member: '曾厉害',
+          email: '10000@qq.com',
+          weight: '1吨',
+          bulk: '7545',
+          freight: '$80',
+          tax: '$0',
+          odd_money: '$888',
+          pay_status: '支付完成',
+          odd_status: '已确认'
+        }
+      ],
+      fList: [],
+      fList2: [],
+      fList3: [],
+      fList4: [],
+      fList5: [],
+      fList6: [],
+      // 底部tabs栏表头数据
+      footerName: [
+        { name: '订单明细', num: 12 },
+        { name: '收货联系人', num: 3 },
+        { name: '账单联系人', num: 5 },
+        { name: '支付记录', num: 6 },
+        { name: '订单变更日志', num: 9 },
+        { name: '物流信息', num: 1 }
+      ],
+      // 底部tabs栏表格数据
+      detail: [
+        {
+          billing: [
+            {
+              Address: '广州塔',
+              AddressInfo: '顶楼',
+              Company: '有关部门',
+              FullName: 'edith',
+              Memo: '',
+              Phone: '13652658888',
+              Zipcode: '523000'
+            }
+          ],
+          contact: [
+            {
+              Address: '去问问',
+              AddressInfo: 'wer',
+              Company: 'fsaerf',
+              FullName: 'edith',
+              Memo: '',
+              Phone: '12312312',
+              Zipcode: '23123'
+            }
+          ],
+          detail: [
+            {
+              GoodsName: 'everything',
+              Num: 2,
+              SKU: '我是假数据',
+              SetSum: '5641.80',
+              SetUnitPrice: '$298.90',
+              Unit: 'Piece',
+              Volume: '30000.00',
+              Weight: '5.00'
+            },
+            {
+              GoodsName: 'meten',
+              Num: 1,
+              SKU: 'edith',
+              SetSum: '324',
+              SetUnitPrice: '451.70',
+              Unit: 'Piece',
+              Volume: '10000.00',
+              Weight: '2.30'
+            }
+          ],
+          log: [
+            {
+              AddTime: '2019-9-12',
+              Memo: '我是备注',
+              OPTId: 'edith',
+              Status: '已确认'
+            },
+            {
+              AddTime: '2019-9-12',
+              Memo: '',
+              OPTId: '',
+              Status: '暂存'
+            }
+          ],
+          logistics: [],
+          payLog: []
+        }
+      ]
+    }
+  },
+  methods: {
+    test (checked, name) {
+      console.log(checked, name)
+    },
+    edTable (row, index) {
+      console.log(row)
+      for (let i = 0; i < this.detail.length; i++) {
+        this.fList = this.detail[i].detail
+        this.fList2 = this.detail[i].contact
+        this.fList3 = this.detail[i].billing
+        this.fList4 = this.detail[i].payLog
+        this.fList5 = this.detail[i].log
+        this.fList6 = this.detail[i].logistics
+      }
+    },
+    PageSizeChange (limit) {
+      this.params.limit = limit
+    },
+    pageChange (page) {
+      this.params.page = page
+    },
+    search () {
+      let len = this.tableData
+      let arr = []
+      for (let i in len) {
+        if (len[i].name === this.companyName) {
+          arr.push(len[i])
+        } else if (this.companyName === '') {
+          this.newList = this.tableData
+          return
+        }
+      }
+      this.newList = arr
+    },
+    addBus () {
+      this.handleModal = true
+      this.modalTitle = '新增'
+    },
+    editBus (item, index) {
+      console.log(item)
+      this.handleModal = true
+      this.modalTitle = '设置'
+      this.itemIndex = index
+      this.formValidate = JSON.parse(JSON.stringify(item))
+    },
+    handleSubmit (name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          let params = JSON.parse(JSON.stringify(this.formValidate))
+          if (this.modalTitle === '新增') {
+            this.$Message.success(this.$t('message.addSuccess'))
+            this.newList.unshift(params)
+          } else {
+            this.$set(this.newList, this.itemIndex, params)
+            this.$Message.success(this.$t('message.editSuccess'))
+          }
+          this.handleModal = false
+        } else {
+          if (this.modalTitle === '新增') {
+            this.$Message.error(this.$t('message.addError'))
+          } else {
+            this.$Message.error(this.$t('message.editError'))
+          }
+        }
+      })
+    },
+    handleReset (name) {
+      this.$refs[name].resetFields()
+    },
+    remove (index) {
+      this.$Modal.warning({
+        title: this.$t('message.title'),
+        content: this.$t('message.delete'),
+        onOk: () => {
+          this.newList.splice(index, 1)
+        }
+      })
+    }
+  },
+  mounted () {
+    this.newList = this.tableData
+    setTimeout(() => {
+      this.loading = false
+    }, 1000)
+  }
+}
+</script>

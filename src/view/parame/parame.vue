@@ -1,0 +1,252 @@
+<template>
+<div>
+
+   <div class="demo-split">
+      
+            <div slot="top" class="demo-split-pane">
+                <Button type="error">删除</Button>
+                <Button type="warning">修改</Button>
+                 <Button type="success" @click="addNodes">新增</Button>
+            </div>
+        
+    </div>  
+ <Tree :data="data5" :render="renderContent" :multiple=false  @on-check-change='getNodes' ref='tree5'  show-checkbox :check-strictly=true></Tree>
+</div>
+    
+</template>
+
+<script>
+import axios from 'axios'
+export default {
+    name:'parame',
+    data() {
+        return {
+            value1:'',
+            value2:'',
+            nodeKey:'',
+            data:[],
+            split2: 0.5,
+           data5: [
+                    {
+                        title: '系统设置',
+                        expand: true,
+                        render: (h, { root, node, data }) => {
+                            return h('span', {
+                                style: {
+                                    display: 'inline-block',
+                                    width: '100%'
+                                }
+                            }, [
+                                h('span', [
+                                    h('Icon', {
+                                        props: {
+                                            type: 'ios-folder-outline'
+                                        },
+                                        style: {
+                                            marginRight: '8px',
+                                            color:'red',
+                                            size:'16px'
+                                        }
+                                    }),
+                                    h('span', data.title)
+                                ]),
+                                h('span', {
+                                    style: {
+                                        display: 'inline-block',
+                                        float: 'right',
+                                        marginRight: '32px'
+                                    }
+                                })
+                            ]);
+                        },
+                        children: [
+                            
+                            {
+                                title: '自动邮件',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: '注册邮件',
+                                        expand: true,
+                                        children:[
+                                            {
+                                                title:'邮件内容配置',
+                                                expand: true
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        title: '购物车邮件',
+                                        expand: true,
+                                         children:[
+                                            {
+                                                title:'邮件内容配置key',
+                                                expand: true 
+                                            },
+                                            {
+                                                title:'添加购物车邮件时间',
+                                                expand: true 
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        title: '支付成功',
+                                        expand: true,
+                                        children:[
+                                            {
+                                                title:'邮件内容配置key',
+                                                expand: true 
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                title: '反馈邮件',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: '反馈邮件Key',
+                                        expand: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+        
+        }
+    },
+    methods: {
+        
+            renderContent (h, { root, node, data }) {
+                return h('span', {
+                    style: {
+                        display: 'inline-block',
+                        width: '100%'
+                    }
+                }, [
+                    h('span', [
+                        h('Icon', {
+                            props: {
+                                type: 'ios-paper-outline'
+                            },
+                            style: {
+                                marginRight: '8px'
+                            }
+                        }),
+                        h('span', data.title)
+                    ]),
+                    h('span', {
+                        style: {
+                            display: 'inline-block',
+                            float: 'right',
+                            marginRight: '32px'
+                        }
+                    })
+                ]);
+            },
+            append (data) {
+                const children = data.children || [];
+                children.push({
+                    title: data.title,
+                    expand: true
+                });
+                this.$set(data, 'children', children);
+            },
+            remove (root, node, data) {
+                const parentKey = root.find(el => el === node).parent;
+                const parent = root.find(el => el.nodeKey === parentKey).node;
+                const index = parent.children.indexOf(data);
+                parent.children.splice(index, 1);
+            },
+            //获取节点
+            getNodes(data){
+               //console.log(data)
+//                 　　let choicesAll=this.$refs.tree5.getSelectedNodes; //方法的运用 getSelectedNodes也是如此用法
+// 　　　              　console.log(choicesAll); 
+               if(data.length == 0){
+                   this.$Message.info('未选择任何一项')
+                   this.nodeKey = ''
+               }
+                        this.nodeKey = data[data.length-1].nodeKey 
+                    
+                        //console.log(this.nodeKey )
+                    
+            },
+            addNodes(){
+                var that = this 
+                //console.log(typeof(this.nodeKey))
+                if(typeof(this.nodeKey)  == 'number'){
+                   that.$Modal.confirm({
+                        title:'编辑信息',
+                        onOk:()=>{
+                            that.$Message.info('点击了确定')
+                            console.log(this.value1,this.value2)
+                            //data:根节点  key  title
+                           // this.append()
+                        },
+                        onCancel:()=>{
+                            that.$Message.info('点击了取消')
+                        },
+                        render: (h) => {
+                            return h('div',[
+                                h('Input',{
+                                    props: {
+                                    value: this.value1,
+                                    autofocus: true,
+                                    placeholder: '请输入名称'
+                                },
+                                on: {
+                                    input: (val) => {
+                                        this.value1 = val;
+                                    }
+                                }
+                                }),
+                                h('Input',{
+                                    props: {
+                                    value: this.value2,
+                                    autofocus: true,
+                                    placeholder: '请输入KEY'
+                                },
+                                on: {
+                                    input: (val) => {
+                                        this.value2 = val;
+                                    }
+                                }
+                                })
+                            ])
+                        }
+                    })
+                }else{
+                    this.$Message.info('未选中')
+                }
+            }
+        
+    },
+}
+</script>
+
+<style scoped>
+.demo-split{
+        height: 50px;
+        border-bottom: 1px solid #dcdee2;
+    }
+.demo-split-pane{
+        padding: 10px;
+    }
+.demo-split-pane  button{
+    margin: 0 10px;
+    float: right;
+}
+.modelStyle{
+    
+}
+.modelStyle input{
+  float: left;
+  margin-left: 15px
+}
+.modelStyle span{
+  float: left;
+}
+</style>

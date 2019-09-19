@@ -1,0 +1,466 @@
+[{
+  "id": "7c8b24753ff9456b882c26ef21378998",
+  "name": "Residence(住宅)",
+  "checked": false,
+  "children": [{
+    "id": "dfef5fac28db4d799b1462b6394c986e",
+    "name": "apartment(公寓)",
+    "checked": false,
+    "children": [{
+      "id": "4e1902cfd4c641e383a2830492ba444f",
+      "name": "Living room(客厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "8902c0261be5414ebf8317b9d67ec1e2",
+      "name": "dining hall(饭厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "cc5460a701b64163935e161f496c1b72",
+      "name": "bedroom(卧室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "768dfe26359543f8a8fb3124f363a0df",
+      "name": "study room(书房)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "7d1bf18c16e644ccabed7219dac00c9f",
+      "name": "Aisle(走廊)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "eb47ae9a1fd6421087d150616a9e0f1e",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "9303656e34a24c5f815223d8a4243718",
+      "name": "bar counter(吧台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "10271d5142de47f9875881bc11ce3b7c",
+      "name": "soho(家庭办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "ee2db717068543029ba10377886f592b",
+      "name": "Playroom(娱乐室)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "fb08ecfd995344cca3b4ef2e74af15e9",
+    "name": "Villa(别墅)",
+    "checked": false,
+    "children": [{
+      "id": "3512c95403b9458f96a702bb244618cb",
+      "name": "Living room(客厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "f0877ef36f03485dac4f7e9bda385365",
+      "name": "dining hall(饭厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "0c7507edaf4f4731adfca6f99a03f846",
+      "name": "bedroom(卧室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "47010328125e4173a9bc045cd4f1143b",
+      "name": "study room(书房)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "0d896a8413c247bd9e90e9ca3360c9c9",
+      "name": "Aisle(走廊)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "def1778e8b9a430c8c616022a8b37edd",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "471eae8e8b034480b133a62c0a4c99ed",
+      "name": "bar counter(吧台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "07cb4ab1b5ef4ce6b8cb884a45aef2e6",
+      "name": "soho(家庭办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "976ab67201564090a4debcbe40d9e0c3",
+      "name": "Playroom(娱乐室)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "b9759ec658214aeb9b417a7549aba547",
+    "name": "mansion(豪宅)",
+    "checked": false,
+    "children": [{
+      "id": "49823c75fa984ad4829891e637e89c0b",
+      "name": "Living room(客厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "1898441997ed40cb817d280ae8730db2",
+      "name": "dining hall(饭厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "f3b008256ee64ddb95e2278d1d47bd94",
+      "name": "bedroom(卧室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "689e21e579994b43acc1536c250f00bc",
+      "name": "study(书房)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "8e42eecee1974821a0defbd9ab458407",
+      "name": "Aisle(走廊)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "c7b54abcb80046a297089e20ecde87f5",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "1dc1cede0dcc44a5b7bc7a9e4bad5753",
+      "name": "bar counter(吧台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "33c0bcdf3f214d8a8e507c9c08553bc9",
+      "name": "soho(家庭办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "71abf187b43546f2a25f3378863c0ae6",
+      "name": "Playroom(娱乐室)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "05c7d69d03194fb98ad71e59a13015c7",
+    "name": "Business(商业)",
+    "checked": true,
+    "children": [{
+      "id": "3fbc154c4c304ce8a8f452b14e09cf96",
+      "name": "Hotel(酒店)",
+      "checked": false,
+      "children": [{
+        "id": "f8ef7ba5dd63413b89eade92f31d1228",
+        "name": "Lobby(大堂)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "a0da6ed2e6294d11be66d649c8a901f6",
+        "name": "Aisle(走廊)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "67ccbf4e12f44ca1bdaa993fbc1dbe87",
+        "name": "Elevator Lobby(电梯口)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "cb2536ad18c941e1a5d4f926ccb922a0",
+        "name": "Room(房间)",
+        "checked": true,
+        "children": null
+      }, {
+        "id": "0cff9187efa24eed805b28dca4a56c10",
+        "name": "Meeting Room(会议室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "de42abaa5eda4baf8351362c23e4fb72",
+        "name": "Washroom(卫生间)",
+        "checked": false,
+        "children": null
+      }]
+    }, {
+      "id": "3ba4d20ed04c4214b41d7528b9d8525d",
+      "name": "Canteen(餐厅)",
+      "checked": true,
+      "children": [{
+        "id": "0e032a94542a4b4083a1a5442484f863",
+        "name": "Bar(酒吧)",
+        "checked": true,
+        "children": null
+      }, {
+        "id": "18a089c45aa64276b92f4f7f616e2525",
+        "name": "coffee shop(咖啡厅)",
+        "checked": true,
+        "children": null
+      }, {
+        "id": "f490b124d77f466c8674e6d6259cdb0f",
+        "name": "Western Resturant(西餐厅)",
+        "checked": true,
+        "children": null
+      }, {
+        "id": "d1b853f78d2948bfb338c4c23ed61d7f",
+        "name": "Chinese Resturant(中餐厅)",
+        "checked": true,
+        "children": null
+      }]
+    }, {
+      "id": "98a1a1d54dab4e0eaa8aafc242d3f400",
+      "name": "cosmetology institutions(美容机构)",
+      "checked": false,
+      "children": [{
+        "id": "dca7be9c76c54ee480721e78530a6537",
+        "name": "SPA(SPA)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "66f7f5b67fd64e2f8614a73944dcbb14",
+        "name": "SALON(SALON)",
+        "checked": false,
+        "children": null
+      }]
+    }, {
+      "id": "21c6b2feff0a47e9b9196e47b3746790",
+      "name": "government office building(政府写字楼)",
+      "checked": false,
+      "children": [{
+        "id": "0f7eda646e3648aeb53baeb130db1281",
+        "name": "Reception(前台)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "20285ea849d24c0082e6b3546bfb639c",
+        "name": "Meeting Room(会议室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "d3164a6142424e3cadffc5b82a370ebb",
+        "name": "Resting room(休息室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "e216a44ef3304470876b45f15e5dd77e",
+        "name": "office(独立办公室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "bfb3916ba35a431bb7be4d0ca96938e5",
+        "name": "openoffice(开放式办公室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "794a7dfce5514ba8b7abddbbee9c7582",
+        "name": "Aisle(走廊)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "fec543dff3db447c9045505ef8298f28",
+        "name": "Washroom(卫生间)",
+        "checked": false,
+        "children": null
+      }]
+    }, {
+      "id": "90db7b8f85b94dafb3b5fc344b54ad6a",
+      "name": "Company office building(企业写字楼)",
+      "checked": false,
+      "children": [{
+        "id": "35ad6a8fa1fb427081f311882ebfe9f7",
+        "name": "Reception(前台)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "a2a8f10b053a47d48d2e66cf0a3a8763",
+        "name": "Meeting Room(会议室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "235c0ff0837f4a00935d2b80a86e0e39",
+        "name": "Resting room(休息室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "4e1e17b4d8724e919c2a07feb8a7829f",
+        "name": "office(独立办公室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "8277f7da3be544aab514a605d87c9006",
+        "name": "openoffice(开放式办公室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "849a65cc08c64a7697c573aaff8c7c94",
+        "name": "Aisle(走廊)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "b65b1f7f4f6147c59d1ae6012e328b01",
+        "name": "Washroom(卫生间)",
+        "checked": false,
+        "children": null
+      }]
+    }, {
+      "id": "89a80a1dc2bf402582dad28e05e75ada",
+      "name": "Shopping Mall(购物中心)",
+      "checked": false,
+      "children": [{
+        "id": "cd270df3bc3340f7b6f6f102b91f29aa",
+        "name": "Aisle(走廊)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "5ffc7e786e5e4d87a43d9cb7925e9be3",
+        "name": "Office(独立办公室)",
+        "checked": false,
+        "children": null
+      }, {
+        "id": "0d598c2c19d34176a353087fd834cd27",
+        "name": "Washroom(洗手间)",
+        "checked": false,
+        "children": null
+      }]
+    }]
+  }]
+}, {
+  "id": "6b5b82b6935c4b5d83bdd0a5968757d8",
+  "name": "public place(公共场所)",
+  "checked": false,
+  "children": [{
+    "id": "71752f9dabfc4a64a13dc234bf6e9644",
+    "name": "Library(图书馆)",
+    "checked": false,
+    "children": [{
+      "id": "2e5f1ffcab1142b8a89288cbd9225fa3",
+      "name": "reading room(阅读室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "5dc79e3f741042129b4d3d7ebe562825",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "cf137329a1ea4995ac4dc260bc9d7cf1",
+      "name": "Office(办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "7f97420eeca54f3886a624b6c3c9bae0",
+      "name": "Book-storing Room(藏书室)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "706ad8a62b274fdd9579a8e34313be92",
+    "name": "Museum(博物馆)",
+    "checked": false,
+    "children": [{
+      "id": "50c3d25af86f408787906eb7573c4cb5",
+      "name": "exhibition room(展览厅)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "b95a5085da7f469a9712151e48414332",
+      "name": "Office(独立办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "550d5fc1ace748a79e942b1651640093",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "9eee2adae79b496eb7bbde49fabd1d5b",
+    "name": "Hospital(医院)",
+    "checked": false,
+    "children": [{
+      "id": "99f95f2d867d4c65a2c09df235a47246",
+      "name": "Reception(前台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "dc6af5d7950f4cad8cf7287d93ba2d49",
+      "name": "Office(独立办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "4558b30c3c0f44a6abccc40504742459",
+      "name": "Ward(病房)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "e263063e112d4ab79676c8beef3d096a",
+    "name": "Station(公共车站)",
+    "checked": false,
+    "children": [{
+      "id": "bbadb8c144e74a1b8be8d5c482ce65c6",
+      "name": "Waiting Hall(候车大厅)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "787abb30a6624706bcca9a0f43978fed",
+    "name": "association(协会组织)",
+    "checked": false,
+    "children": [{
+      "id": "9879382fe4de403b95c5f2513000638a",
+      "name": "Reception(前台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "e70fe6ed44114dd9a4efacfef66ded75",
+      "name": "Office(独立办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "2decf8f79702437494f0c8e49fc3abdb",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "14d8d4c0225946db88e400b86f8033f9",
+    "name": "Church(教堂教会)",
+    "checked": false,
+    "children": [{
+      "id": "34ff04f4b7314ef684ad7dc46845244f",
+      "name": "Church(教堂)",
+      "checked": false,
+      "children": null
+    }]
+  }, {
+    "id": "4b61c6b80bb04a9c83dc041ffa6e8958",
+    "name": "charity(慈善机构)",
+    "checked": false,
+    "children": [{
+      "id": "8c6a38bf1f2047799b0f29fa3247b941",
+      "name": "Reception(前台)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "b85b87352982468fadf6ee3610cc716e",
+      "name": "Office(独立办公室)",
+      "checked": false,
+      "children": null
+    }, {
+      "id": "80734496ea2846f18b0fab49bc662883",
+      "name": "Washroom(卫生间)",
+      "checked": false,
+      "children": null
+    }]
+  }]
+}]

@@ -1,0 +1,97 @@
+<template>
+    <div>
+        <div class="demo-split">
+           
+                <div slot="top" class="demo-split-pane">
+                    <div class="btn">
+                         <Button type="warning">删除</Button>
+                           <Button type="success">修改</Button>
+                        <Button type="primary" @click="add()">新增</Button>
+                     </div>
+                </div> 
+        </div>
+            <div slot="bottom" class="pane">
+               搜索     <Input v-model="value" placeholder="Enter something..." style="width: 300px" />  <Button type="primary">搜索</Button>
+            </div>
+        <div>
+            <Table :columns="columns1" :data="list"></Table>
+           
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+        data() {
+            return {
+                total:20,
+                value:'',
+                pageSize:5, //每页条数
+                list:[],
+                pageNo:1,
+                value1:'',
+                columns1: [
+                    {
+                        title: '角色名称',
+                        key: 'roleName'
+                    },
+                    {
+                        title: '描述信息',
+                        key: 'desc'
+                    }
+         
+                ]
+            }
+    
+         
+       },
+       methods: {
+           add(){
+               this.$Modal.confirm({
+                    render: (h) => {
+                        return h('Input', {
+                            props: {
+                                value: this.value1,
+                                autofocus: true,
+                                placeholder: 'Please enter your name...'
+                            },
+                            on: {
+                                input: (val) => {
+                                    this.value1 = val;
+                                }
+                            }
+                        })
+                    }
+                })
+           }
+       },
+}
+</script>
+
+<style  scoped>
+   .demo-split{
+        height: 50px;
+        border: 1px solid #dcdee2;
+    }
+    .demo-split-pane{
+        padding: 10px;
+
+    }
+    .btn{
+        width: 50%;
+        float: right;
+    }
+     .btn button{
+         float: right;
+         margin: 0 6px
+     }
+     .search {
+         width: 100px;
+     }
+     .pane{
+         width: 100%;
+         height: 50px;
+         border: 1px solid #dcdee2;
+         padding: 10px
+     }
+</style>

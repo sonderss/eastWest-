@@ -1,0 +1,171 @@
+<template>
+  <div>
+    <div class="but_list">
+      <Button type="primary" @click="add">新增</Button>
+    </div>
+    <Modal width=650 v-model="modal1" title="新增操作" @on-ok="ok" @on-cancel="cancel">
+        <Form :label-width="80" :model="formItem" :rules="ruleValidate" action="">
+           <FormItem label="SKU" prop="keyinput">
+             <Input v-model="formItem.keyinput" placeholder="请填写key名称"></Input>
+           </FormItem>
+           <FormItem label="简称" prop="nameinput">
+             <Input v-model="formItem.nameinput" placeholder="请填写名称"></Input>
+           </FormItem>
+           <FormItem label="规格" prop="eninput">
+             <Input v-model="formItem.eninput" placeholder="请填写英文名称"></Input>
+           </FormItem>
+        </Form>
+    </Modal>
+    <div class="search">
+      <span>搜索</span>
+      <input type="text" placeholder="请输入关键字" />
+      <Button type="primary">快速查询</Button>
+    </div>
+    <Table border :columns="columns1" :data="data1">
+      <template slot-scope="{row,index}" slot="action">
+         <Button class="btn" type="primary" size="small" style="margin-right: 5px;background: mediumpurple; border-color: mediumpurple;" @click="show(index)">修改</Button>
+         <Button type="error" size="small" @click="remove(index)">删除</Button>
+      </template>
+    </Table>
+    <div class="page"><Page :total="page_total" /></div>
+
+    <Tabs type="card" value="name1">
+      <TabPane label="扩展属性" name="name1">
+        <div style="border: none;" class="but_list">
+          <Button type="primary">商品设置</Button>
+        </div>
+        <Table border :columns="columns2"></Table>
+        </TabPane>
+    </Tabs>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'goodsrecom',
+  data () {
+    return {
+      page_total: 100,
+      modal1: false,
+      formItem: {
+        keyinput: '',
+        nameinput: '',
+        eninput: ''
+      },
+      columns2: [
+        {
+          title: 'SKU',
+          key: 'sku'
+        },
+        {
+          title: '简称',
+          key: 'name'
+        },
+        {
+          title: '售价',
+          key: 'price'
+        },
+        {
+          title: '状态',
+          key: 'states'
+        }
+      ],
+      columns1: [
+        {
+          title: 'Key名称',
+          key: 'key'
+        },
+        {
+          title: '名称',
+          key: 'name'
+        },
+        {
+          title: '英文名称',
+          key: 'ename'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          width: 150,
+          align: 'center'
+        }
+      ],
+      data1: [
+        {
+          key: 'Recommend',
+          name: '推荐商品',
+          ename: 'Recommend Goods'
+        },
+        {
+          key: 'HotSale',
+          name: '热销商品',
+          ename: 'Hot Sale'
+        },
+        {
+          key: 'abc',
+          name: 'abc画派',
+          ename: 'a3223'
+        }
+      ]
+    }
+  },
+  methods: {
+    add () {
+      this.modal1 = true
+    },
+    remove (index) {
+      this.data1.splice(index, 1)
+    },
+    ok () {
+
+    },
+    cancel () {
+
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+.btn:hover{
+  opacity: 0.8;
+}
+.page {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+.but_list {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px dashed #dedede;
+  padding-bottom: 10px;
+  button {
+    margin: 0 2px;
+  }
+}
+.search {
+  span {
+    font-size: 15px;
+  }
+  margin: 15px 0;
+  input {
+    margin: 0 20px;
+    padding: 5px;
+  }
+}
+.list{
+
+  li{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 10px 0;
+    span{
+      display: inline;
+      width: 50px;
+      margin-right: 20px;
+    }
+  }
+}
+</style>
