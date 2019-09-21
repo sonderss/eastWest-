@@ -294,11 +294,6 @@ export default {
                        this.list[index].staic = '启用'
                        this.index = ''
                    }
-                   if(!a){
-                       this.$Message.info('该用户状态异常')
-                      
-                       return false
-                   }
                   this.$Message.info('已改为'+  this.list[index].staic)
                }else{
                    alert('请选择一项进行改变状态')

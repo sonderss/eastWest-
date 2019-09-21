@@ -158,16 +158,16 @@ export default [
         path: 'memberManage',
         name: 'memberManage',
         meta: {
-          icon: 'md-person',
+          icon: 'md-thermometer',
           title: '会员管理'
         },
-        component: () => import('@/view/user/member.vue')
+        component: () => import('@/view/user/index.vue')
       },
       {
         path: 'onSiteOtice',
         name: 'onSiteOtice',
         meta: {
-          icon: 'ios-notifications',
+          icon: 'md-thermometer',
           title: '站内通知'
         },
         component: () => import('@/view/user/onSiteOtice.vue')
@@ -176,7 +176,7 @@ export default [
         path: 'userRank',
         name: 'userRank',
         meta: {
-          icon: 'ios-ribbon',
+          icon: 'md-thermometer',
           title: '会员等级'
         },
         component: () => import('@/view/user/userRank.vue')
@@ -294,35 +294,5 @@ export default [
         component: () => import('@/view/role/role.vue')
       }
     ]
-  },
-  {
-    path: '/finance',
-    name: 'finance',
-    meta: {
-      icon: 'ios-stats',
-      title: '财务'
-    },
-    component: Main,
-    children: [
-      {
-        path: '/finance1',
-        name: 'finance1', // 一级目录下的二级页面
-        meta: {
-          icon: 'arrow-graph-up-right',
-          title: '财务操作'
-        },
-        component:() => import('@/view/finance/financialcz/index.vue')
-      },
-      {
-        path: '/finance2',
-        name: 'finance2', // 一级目录下的二级页面
-        meta: {
-          icon: 'arrow-graph-up-right',
-          title: '佣金记录'
-        },
-        component:() => import('@/view/finance/financialyj/index.vue')
-      }
-    ]
-  },
-  
+  }
 ]

@@ -294,35 +294,5 @@ export default [
         component: () => import('@/view/role/role.vue')
       }
     ]
-  },
-  {
-    path: '/finance',
-    name: 'finance',
-    meta: {
-      icon: 'ios-stats',
-      title: '财务'
-    },
-    component: Main,
-    children: [
-      {
-        path: '/finance1',
-        name: 'finance1', // 一级目录下的二级页面
-        meta: {
-          icon: 'arrow-graph-up-right',
-          title: '财务操作'
-        },
-        component:() => import('@/view/finance/financialcz/index.vue')
-      },
-      {
-        path: '/finance2',
-        name: 'finance2', // 一级目录下的二级页面
-        meta: {
-          icon: 'arrow-graph-up-right',
-          title: '佣金记录'
-        },
-        component:() => import('@/view/finance/financialyj/index.vue')
-      }
-    ]
-  },
-  
+  }
 ]

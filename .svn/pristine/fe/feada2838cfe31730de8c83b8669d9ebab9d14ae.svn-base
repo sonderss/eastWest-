@@ -12,7 +12,6 @@ export default {
   add: '新增',
   table: {
     pleaseEnter: '请输入',
-    pleaseSelect: '请选择',
     goodsName: '商品名称',
     weight: '重量',
     bulk: '体积',
@@ -34,33 +33,7 @@ export default {
     goodsSet: '商品设置',
     goodsHot: '热销商品',
     nameNumber: '姓名编号',
-    userType: '用户类型',
-    userSearch: '会员搜索',
-    sex: '性别',
-    status: '状态',
-    ID: '身份',
-    country: '国家',
-    consumption: '消费情况',
-    onVisit: '访问情况',
-    selectTime: '选择时间',
-    memberLevel: '会员等级',
-    birthday: '生日',
-    sendCoupon: '发送优惠券',
-    sendInfo: '发送客服图文消息',
-    sendInstation: '发送站内消息',
-    refresh: '刷新',
-    userIndex: '用户编号',
-    realName: '真实姓名',
-    userRemark: '用户备注',
-    promoter: '推广员',
-    preview: '预览',
-    push: '推送',
-    editBalance: '积分余额修改',
-    edit: '修改',
-    balance: '余额',
-    balanceAdd: '增加',
-    balanceMinus: '减少',
-    integral: '积分'
+    userType: '用户类型'
   },
   formButton: {
     submit: '提交',
@@ -72,8 +45,6 @@ export default {
     addSuccess: '新增成功',
     editSuccess: '修改成功',
     addError: '新增失败',
-    editError: '修改失败',
-    yesSend: '是的,我要发送',
-    thinkAboutIt: '让我再考虑一下下...'
+    editError: '修改失败'
   }
 }
