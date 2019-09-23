@@ -269,7 +269,7 @@ export default [
     path: '/account',
     name: 'sys_guan',
     meta: {
-      access: ['super_admin'], //拥有数组内用户权限的用户可以看到此路由
+      access: ['super_admin'] , //拥有数组内用户权限的用户可以看到此路由
       icon: 'ios-stats',
       title: '系统管理'
     },
@@ -299,7 +299,7 @@ export default [
     path: '/finance',
     name: 'finance',
     meta: {
-      icon: 'logo-usd',
+      icon: 'ios-stats',
       title: '财务'
     },
     component: Main,
@@ -308,21 +308,21 @@ export default [
         path: 'finance1',
         name: 'finance1', // 一级目录下的二级页面
         meta: {
-          icon: 'md-hand',
+          icon: 'arrow-graph-up-right',
           title: '财务操作'
         },
-        component: () => import('@/view/finance/financialcz/index.vue')
+        component:() => import('@/view/finance/financialcz/index.vue')
       },
       {
         path: 'finance2',
         name: 'finance2', // 一级目录下的二级页面
         meta: {
-          icon: 'ios-pricetags',
+          icon: 'arrow-graph-up-right',
           title: '佣金记录'
         },
-        component: () => import('@/view/finance/financialyj/index.vue')
+        component:() => import('@/view/finance/financialyj/index.vue')
       }
     ]
   },
-
+  
 ]

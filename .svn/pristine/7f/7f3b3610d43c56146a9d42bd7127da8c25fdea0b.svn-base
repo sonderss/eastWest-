@@ -1,0 +1,245 @@
+<template>
+    <div>
+        <Row>
+            <Col span="24">
+                <Card dis-hover >
+                    <p slot="title">搜索</p>
+                    <div style="display:flex;">
+                        <div class="content">
+                            <p class="text">昵称/ID</p>
+                            <input type="text" v-model="keyWords" placeholder="请输入您的姓名..."/>
+                        </div>
+                        <div class="content" style="margin-left:20px">
+                            <p class="text">佣金范围</p>
+                            <input type="text" style="width:100px;border-radius:0;margin-right:10px" placeholder="￥"/>
+                            <p>-</p>
+                        </div>
+
+                         <div class="content">
+                            <input type="text" style="width:100px;border-left:1px solid #ccc;margin-left:10px" placeholder="￥"/>
+                        </div>
+                         <div class="content"  style="margin-left:20px">
+                            <p class="text" style="border-right:none">佣金排序</p>
+                             <i-select :model.sync="model3" style="width:150px;outline:none" size='large' @on-change='selectValue1' >
+                                <i-option v-for="(item,index) in cityList" :value="item.value" :key="index">{{ item.label }}</i-option>
+                            </i-select>
+                        </div>
+                         <Button type="info" icon="ios-search" style="margin-left:20px" @click="search(keyWords)">搜索</Button>
+                          <Button icon="md-print" type="primary" style="margin-left:20px" @click="expend">导出</Button>
+
+                    </div>
+                   
+                </Card>
+            </Col>
+        </Row>
+        <Row style="margin-top:15px">
+            <Col span="24">
+                <Card dis-hover >
+                    <p slot="title">佣金记录列表</p>
+                     <Table border :columns="columns5" :data="data5" @on-sort-change="paixu" ref='table'></Table>
+                </Card>
+            </Col>
+        </Row>
+    </div>
+</template>
+<script>
+import axios from 'axios'
+export default {
+    mounted() {
+        axios({
+            url:"http://www.baidu.com/yongjin"
+        }).then(res=>{
+            console.log(res.data.list)
+            this.data5 = res.data.list
+            this.list = res.data.list
+        })
+    },
+    data() {
+        return{
+          list:[],
+          keyWords:'',
+          cityList: [
+                    {
+                        value: 'push',
+                        label: '升序'
+                    },
+                    {
+                        value: 'poll',
+                        label: '降序'
+                    }
+            ],
+            model3:'',
+             columns5: [
+                    {
+                        title: '昵称/姓名',
+                        key: 'name',
+                        align:'center'
+                    },
+                    {
+                        title: '总佣金金额',
+                        key: 'allMoney',
+                        sortable: true,
+                        align:'center'
+                    },
+                    {
+                        title: '账户余额',
+                        key: 'lastMoney',
+                        align:'center'
+                    },
+                    {
+                        title: '剩余佣金',
+                        key: 'lastYj',
+                        align:'center'
+                    },
+                    {
+                        title: '提现佣金',
+                        key: 'txYj',
+                        align:'center'
+                    },
+                    {
+                        title: '提现到账佣金',
+                        key: 'txdzYj',
+                        align:'center'
+                    },
+                    {
+                        title: '操作',
+                        key: 'set',
+                        align:'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.show(params.index)
+                                        }
+                                    }
+                                }, '查看'),
+                                 h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.$Modal.confirm({
+                                                title: '删除操作',
+                                                content: '<p>确认删除吗？</p>',
+                                                onOk: () => {
+                                                     this.remove(params.index)
+                                                }
+                                            });
+                                          
+                                        }
+                                    }
+                                }, '删除')
+                            ]);
+                        }
+                    }
+                ],
+                data5: []
+        }
+    },
+    methods: {
+         show (index) {
+                this.$Modal.info({
+                    title: 'User Info',
+                    content: `姓名：${this.data5[index].name}<br>总佣金金额：${this.data5[index].allMoney}<br>账户余额：${this.data5[index].lastMoney}<br>
+                    剩余佣金：${this.data5[index].lastYj}<br>
+                    提现佣金：${this.data5[index].txYj}<br>
+                    提现到账佣金：${this.data5[index].txdzYj}<br>
+                    `
+                })
+            },
+        remove (index) {
+            this.data5.splice(index, 1);
+        },
+        selectValue1(e){
+            //   var dataList = this.list
+            //   var arr = []
+
+            // for(var i  in dataList){
+            //     arr.push(dataList[i].allMoney)
+            // }
+            //  for(let i of arr){
+            //      if(dataList[i].arrMoney == arr[i] ){
+
+            //      }
+            //  }
+            // console.log(arr)
+            // console.log(arr.sort(function(a,b){
+            //     return a-b
+            // }))
+        },
+        paixu(column,key,order){
+          //order: "normal"  升序   order: "desc"    降序
+          
+          
+        },
+        expend(){
+            this.$refs.table.exportCsv({
+                filename: 'The original data'
+            });
+        },
+        //自定义一个搜索方式
+        search1(keyWords){
+            return this.list.filter(item =>{
+                if(item.name.includes(keyWords)){
+                    return item
+                }
+            })
+        },
+        search(keyWords){
+            var arr = this.search1(keyWords)
+             if(arr.length>0){
+                this.data5 = arr
+           }else if(arr.length == 0){
+               this.$Message.info('请输入正确的用户信息...')
+           }
+           if(keyWords.length == 0 || keyWords.replace(/(^s*)|(s*$)/g, "").length ==0){
+                this.$Message.info('请输入正确的用户信息')
+           }
+        }
+
+    },
+}
+</script>
+<style scoped>
+.content{
+    display: flex;
+
+    align-items: center
+}
+.content input{
+    outline: none;
+    width: 150px;
+    height: 34px;
+    padding: 5px 15px;
+    line-height: 24px;
+    border-radius: 0 5px 5px 0;
+    background: none;
+    border:1px solid #ccc;
+    border-left:none
+}
+.text{
+    width: 110px;
+    padding: 5px 15px;
+    height: 34px;
+    line-height: 24px;
+    background: none;
+    border-radius: 5px 0 0 5px;
+    border:1px solid #ccc;
+    text-align: center
+    
+}
+.ivu-select-selection{
+     outline: none;
+     height: 34px;
+}
+</style>
