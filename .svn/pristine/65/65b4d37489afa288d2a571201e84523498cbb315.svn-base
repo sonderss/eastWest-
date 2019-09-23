@@ -1,0 +1,54 @@
+.topBody .ivu-form-item {
+  display: inline-block;
+}
+
+.tableText button {
+  margin-right: 1px;
+}
+
+.ed-seen {
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 12px;
+  height: 26px;
+  line-height: 26px;
+  position: absolute;
+  width: 166px;
+  cursor: pointer;
+}
+.ed-card{
+  width: 249px;display: inline-block;margin-right: 10px;background:#f8f8f8;
+}
+.ed-card:last-child{
+  margin-right: 0;
+}
+.ed-card-h3{
+  font-size: 13px; color: #999; margin-bottom: 5px
+}
+.ed-card-txt{
+  color: #009688;
+}
+.ed-member{
+  padding: 0 0 10px 0; display: flex;justify-content: space-around;
+}
+ed-card2 p, .ed-card p{
+  font-size: 13px;
+}
+.ed-a{
+  width: 20px;
+  background-color: rgb(30, 159, 255);
+  color: rgb(255, 255, 255);
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  border-radius: 2px;
+}
+.ed-card2{
+  width: 184px;display: inline-block;margin-right: 10px;
+}
+.ed-card2:last-child{
+  margin-right: 0;
+}
+.ed-p {
+  font-size: 24px;
+}
