@@ -3,32 +3,22 @@
     <Row>
       <Col span="24">
         <Card dis-hover>
-          <p slot="title">搜索</p>
+          <p slot="title">搜索条件</p>
           <div style="display:flex;">
             <div class="content">
               <p class="text">昵称/ID</p>
               <input type="text" v-model="keyWords" placeholder="请输入您的姓名..." />
             </div>
             <div class="content" style="margin-left:20px">
-              <p class="text">佣金范围</p>
-              <input
-                type="text"
-                style="width:100px;border-radius:0;margin-right:10px"
-                placeholder="￥"
-                v-model="minMoney"
-              />
+              <p class="text">时间范围</p>
+                    <DatePicker type="date"  @on-change="changeTime"  placeholder="开始时间" style="width:150px;border-radius:0;margin-right:10px"></DatePicker>
               <p>-</p>
             </div>
             <div class="content">
-              <input
-                type="text"
-                style="width:100px;border-left:1px solid #ccc;margin-left:10px"
-                placeholder="￥"
-                v-model="maxMoney"
-              />
+                    <DatePicker type="date"  @on-change="changeTime1"  placeholder="结束时间" style="width:150px;margin-left:10px"></DatePicker>
             </div>
             <div class="content" style="margin-left:20px">
-              <p class="text" style="border-right:none">佣金排序</p>
+              <p class="text" style="border-right:none">筛选类型</p>
               <i-select
                 :model.sync="model3"
                 style="width:150px;outline:none"
@@ -46,7 +36,7 @@
               type="info"
               icon="ios-search"
               style="margin-left:20px"
-              @click="search(keyWords,minMoney,maxMoney)"
+              @click="search(keyWords,startTime,endTime)"
             >搜索</Button>
             <Button icon="md-print" type="primary" style="margin-left:20px" @click="expend">导出</Button>
           </div>
@@ -56,7 +46,7 @@
     <Row style="margin-top:15px">
       <Col span="24">
         <Card dis-hover>
-          <p slot="title">佣金记录列表</p>
+          <p slot="title">资金监控日志</p>
           <Table border :columns="columns5" :data="data5" ref="table" :loading="loading"></Table>
         </Card>
       </Col>
@@ -68,7 +58,7 @@ import axios from 'axios'
 export default {
   mounted () {
     axios({
-      url: 'http://www.baidu.com/yongjin'
+      url: 'http://www.baidu.com/jiankong'
     }).then(res => {
       // console.log(res.data.list);
       this.data5 = res.data.list
@@ -83,46 +73,50 @@ export default {
       minMoney: '',
       maxMoney: '',
       loading: true,
+      startTime: '',
+      endTime: '',
       cityList: [
         {
           value: 'push',
-          label: '升序'
+          label: '全部'
         },
         {
           value: 'poll',
-          label: '降序'
+          label: '用户分享记录'
         }
       ],
       model3: '',
       columns5: [
         {
-          title: '昵称/姓名',
-          key: 'name',
+          title: '会员ID',
+          key: 'id',
+          align: 'center',
+          'sortable': true
+        },
+        {
+          title: '昵称',
+          key: 'nickName',
           align: 'center'
         },
         {
-          title: '总佣金金额',
-          key: 'allMoney',
+          title: '金额积分',
+          key: 'moneyJF',
+          align: 'center',
+          'sortable': true
+        },
+        {
+          title: '类型',
+          key: 'type',
           align: 'center'
         },
         {
-          title: '账户余额',
-          key: 'lastMoney',
+          title: '备注',
+          key: 'desc',
           align: 'center'
         },
         {
-          title: '剩余佣金',
-          key: 'lastYj',
-          align: 'center'
-        },
-        {
-          title: '提现佣金',
-          key: 'txYj',
-          align: 'center'
-        },
-        {
-          title: '提现到账佣金',
-          key: 'txdzYj',
+          title: '创建时间',
+          key: 'setTime',
           align: 'center'
         },
         {
@@ -181,10 +175,8 @@ export default {
     show (index) {
       this.$Modal.info({
         title: '用户信息',
-        content: `姓名：${this.data5[index].name}<br>总佣金金额：${this.data5[index].allMoney}<br>账户余额：${this.data5[index].lastMoney}<br>
-                    剩余佣金：${this.data5[index].lastYj}<br>
-                    提现佣金：${this.data5[index].txYj}<br>
-                    提现到账佣金：${this.data5[index].txdzYj}<br>
+        content: `姓名：${this.data5[index].nickName}<br>金额积分：${this.data5[index].moneyJF}<br>类型：${this.data5[index].type}<br>
+                    备注：${this.data5[index].desc}<br>
                     `
       })
     },
@@ -192,6 +184,8 @@ export default {
       this.data5.splice(index, 1)
     },
     selectValue1 (e) {
+    //   console.log(e)
+      // 这里只是升序降序，需要接口来判断
       if (e === 'push') {
         // 升序
         // eslint-disable-next-line no-inner-declarations
@@ -202,7 +196,7 @@ export default {
             return value1 - value2
           }
         }
-        this.data5.sort(compare('allMoney'))
+        this.data5.sort(compare('moneyJF'))
       }
       if (e === 'poll') {
         // 降序
@@ -214,7 +208,7 @@ export default {
             return value2 - value1
           }
         }
-        this.data5.sort(compare('allMoney'))
+        this.data5.sort(compare('moneyJF'))
       }
     },
     // 导出文件
@@ -224,7 +218,7 @@ export default {
         content: '<p>是否导出？</p>',
         onOk: () => {
           this.$refs.table.exportCsv({
-            filename: '佣金记录列表'
+            filename: '资金监控日志'
           })
         },
         onCancel: () => {
@@ -233,9 +227,13 @@ export default {
       })
     },
     // 定义一个范围搜索方法
-    search2 (minMoney, maxMoney) {
+    search2 (startTime, endTime) {
+      console.log(startTime, endTime)
+      var newStartTime = startTime.split('-')
+      var newendTime = endTime.split('-')
+      console.log(newStartTime, newendTime)
       return this.data5.filter(item => {
-        if (minMoney <= item.allMoney && item.allMoney <= maxMoney) {
+        if (startTime <= item.setTime && item.setTime <= endTime) {
           return item
         }
       })
@@ -243,12 +241,12 @@ export default {
     // 自定义一个搜索方式
     search1 (keyWords) {
       return this.list.filter(item => {
-        if (item.name.includes(keyWords)) {
+        if (item.nickName.includes(keyWords)) {
           return item
         }
       })
     },
-    search (keyWords, minMoney, maxMoney) {
+    search (keyWords, startTime, endTime) {
       var arr = this.search1(keyWords)
       if (arr.length > 0) {
         this.data5 = arr
@@ -256,21 +254,28 @@ export default {
         this.$Message.info('请输入用户姓名...')
       }
 
-      if (minMoney && maxMoney) {
-        var brr = this.search2(minMoney, maxMoney)
+      if (startTime && endTime) {
+        var brr = this.search2(startTime, endTime)
+        // console.log(brr, startTime, endTime)
         this.data5 = brr
         if (brr.length === 0) {
-          this.$Message.info('暂未搜到匹配信息，请核实佣金范围')
+          this.$Message.info('暂未搜到匹配信息，请检查时间范围')
           this.data5 = this.list
         }
-      } else if (minMoney || maxMoney) {
-        this.$Message.info('请输入正确的佣金范围')
+      } else if (startTime || endTime) {
+        this.$Message.info('请输入正确的时间范围')
         this.data5 = this.list
       }
 
-      if (!keyWords && !minMoney && !maxMoney) {
+      if (!keyWords && !startTime && !endTime) {
         this.$Message.info('请输入关键词进行搜索吧')
       }
+    },
+    changeTime (e) {
+      this.startTime = e
+    },
+    changeTime1 (e) {
+      this.endTime = e
     }
   }
 }
