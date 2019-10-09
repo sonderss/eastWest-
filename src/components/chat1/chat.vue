@@ -1,0 +1,463 @@
+<template>
+<div class="content" >
+
+  <div class="wrapper" v-if="showK" id='wrapper' v-drag>
+      <div class="users" >
+        <div :class="isTrue ? 'users_one' : 'backg'"  @click="changeBack">
+               <img style="width:35px;height:35px;border-radius: 50%;margin:0 15px" src='https://i.loli.net/2019/09/29/AQm5oxsOubSfjvF.jpg' />
+               <p>东装西购客服01</p>
+        </div>
+      <div :class="isTrue ? 'backg' : 'users_one'" @click="changeBack">
+               <img style="width:35px;height:35px;border-radius: 50%;margin:0 15px" src='https://i.loli.net/2019/09/29/AQm5oxsOubSfjvF.jpg' />
+               <p>客服小白</p>
+        </div>
+      </div>
+      <div class="head">
+          <img src='https://i.loli.net/2019/09/29/AQm5oxsOubSfjvF.jpg' style="width:50px;height:50px;border-radius: 50%;margin:0 15px" />
+        {{title}}
+         <span @click="close">x</span>
+      </div>
+      <div class="chat_text" >
+          <!-- 用户发送内容 -->
+        <div v-for="(item,index) in list" :key='index'>
+          <div class="me" v-if="index%2 == 0" >
+              <p  ref='op'  class="op"  v-html="item">{{item}}
+
+              </p>
+              <img style="width:50px;height:50px" src='https://i.loli.net/2019/09/29/AQm5oxsOubSfjvF.jpg' />
+          </div>
+          <div class="xiaoai" v-if="index%2 != 0" ref='odiv'>
+              <img ref='oimg' style="width:50px;height:50px" src='https://i.loli.net/2019/09/29/BuNjhbYQTn9yJGX.jpg' />
+               <p  style="background:#fbfbfb">{{item}}</p>
+          </div>
+        </div>
+      </div>
+      <!-- <Ueditor :defaultMsg="defaultMsg" :config="config" id="ue1"  ref="ue"></Ueditor> -->
+      <!-- <div class="mid">
+        <ul class="mid_list">
+            <li><img src='./emoji/100.gif'></li>
+            <li><span style="font-weight:blod;font-size:18px">B</span></li>
+            <li>变色</li>
+        </ul>
+        <div v-for="(item,index) in emojiList" :key="index">
+          <img :src='item.url' />
+        </div>
+      </div> -->
+      <div class="editor">
+        <div @click="getEmj"><img src='https://i.loli.net/2019/10/08/dzuZMU1WIVX7Ahg.png' /></div>
+        <div>
+          <Upload action="//jsonplaceholder.typicode.com/posts/"  :on-success="upLoad"  :default-file-list="defaultList">
+             <img  src="https://i.loli.net/2019/10/08/gjWeRQvUN49hy3Z.png" />
+          </Upload>
+        </div>
+      </div>
+      <div class="emoj" v-if="showEmoji">
+         <ul  >
+           <li  v-for="(item,index) in emojiList" :key='index' @click.stop="get(index)">
+              <img :src="'http://122.152.214.15/emoji/emoji/'+item.url"  :alt='item.alt' />
+           </li>
+         </ul>
+      </div>
+      <div class="input_text">
+             <textarea v-model="value"  ref="input" type="textarea"  placeholder="请输入信息..." style="padding-left:5px;border-top:none;margin:0;padding:0;font-size:14px;height:150px;width:100%;display:block;outline:none; " ></textarea>
+            <!-- <div v-html="arr" class="biao">{{arr}}</div> -->
+            <Button type="info" @click="send" class="btn">发送</Button>
+            <div class="transm"></div>
+      </div>
+  </div>
+
+</div>
+</template>
+
+<script>
+import axios from 'axios'
+export default {
+  name: 'chat',
+  props: {
+    title: {
+      type: String,
+      default: '东装西购客服'
+    }
+  },
+  data () {
+    return {
+      defaultMsg: '123',
+      showEmoji: false,
+      defaultList: [],
+      ha: '',
+      isTrue: true,
+      showK: true,
+      test: '<img src="http://122.152.214.15/emoji/emoji/100.gif" />',
+      arr: '',
+      config: {
+        initialFrameWidth: null,
+        initialFrameHeight: 350
+      },
+      value: '',
+      list: [],
+      emojiList: [
+
+        { 'url': '100.gif', alt: '[微笑]' }, { 'url': '101.gif', alt: '[伤心]' }, { 'url': '102.gif', alt: '[美女]' }, { 'url': '103.gif', alt: '[发呆]' }, { 'url': '104.gif', alt: '[墨镜]' }, { 'url': '105.gif', alt: '[哭]' }, { 'url': '106.gif', alt: '[羞]' }, { 'url': '107.gif', alt: '[哑]' }, { 'url': '108.gif', alt: '[睡]' }, { 'url': '109.gif', alt: '[哭]' }, { 'url': '110.gif', alt: '[囧]' }, { 'url': '111.gif', alt: '[怒]' }, { 'url': '112.gif', alt: '[调皮]' }, { 'url': '113.gif', alt: '[笑]' }, { 'url': '114.gif', alt: '[惊讶]' }, { 'url': '115.gif', alt: '[难过]' }, { 'url': '116.gif', alt: '[酷]' }, { 'url': '117.gif', alt: '[汗]' }, { 'url': '118.gif', alt: '[抓狂]' }, { 'url': '119.gif', alt: '[吐]' }, { 'url': '120.gif', alt: '[笑]' }, { 'url': '121.gif', alt: '[快乐]' }, { 'url': '122.gif', alt: '[奇]' }, { 'url': '123.gif', alt: '[傲]' },
+        { 'url': '124.gif', alt: '[饿]' }, { 'url': '125.gif', alt: '[累]' }, { 'url': '126.gif', alt: '[吓]' }, { 'url': '127.gif', alt: '[汗]' }, { 'url': '128.gif', alt: '[高兴]' }, { 'url': '129.gif', alt: '[闲]' }, { 'url': '130.gif', alt: '[努力]' }, { 'url': '131.gif', alt: '[骂]' }, { 'url': '132.gif', alt: '[疑问]' }, { 'url': '133.gif', alt: '[秘密]' }, { 'url': '134.gif', alt: '[乱]' }, { 'url': '135.gif', alt: '[疯]' }, { 'url': '136.gif', alt: '[哀]' }, { 'url': '137.gif', alt: '[鬼]' }, { 'url': '138.gif', alt: '[打击]' }, { 'url': '139.gif', alt: '[bye]' }, { 'url': '140.gif', alt: '[汗]' }, { 'url': '141.gif', alt: '[抠]' }, { 'url': '142.gif', alt: '[鼓掌]' }, { 'url': '143.gif', alt: '[糟糕]' }, { 'url': '144.gif', alt: '[恶搞]' }, { 'url': '145.gif', alt: '[什么]' }, { 'url': '146.gif', alt: '[什么]' }, { 'url': '147.gif', alt: '[累]' },
+        { 'url': '148.gif', alt: '[看]' }, { 'url': '149.gif', alt: '[难过]' }, { 'url': '150.gif', alt: '[难过]' }, { 'url': '151.gif', alt: '[坏]' }, { 'url': '152.gif', alt: '[亲]' }, { 'url': '153.gif', alt: '[吓]' }, { 'url': '154.gif', alt: '[可怜]' }, { 'url': '155.gif', alt: '[刀]' }, { 'url': '156.gif', alt: '[水果]' }, { 'url': '157.gif', alt: '[酒]' }, { 'url': '158.gif', alt: '[篮球]' }, { 'url': '159.gif', alt: '[乒乓]' }, { 'url': '160.gif', alt: '[咖啡]' }, { 'url': '161.gif', alt: '[美食]' }, { 'url': '162.gif', alt: '[动物]' }, { 'url': '163.gif', alt: '[鲜花]' }, { 'url': '164.gif', alt: '[枯]' }, { 'url': '165.gif', alt: '[唇]' }, { 'url': '166.gif', alt: '[爱]' }, { 'url': '167.gif', alt: '[分手]' }, { 'url': '168.gif', alt: '[生日]' }, { 'url': '169.gif', alt: '[电]' }, { 'url': '170.gif', alt: '[炸弹]' }, { 'url': '171.gif', alt: '[刀子]' },
+        { 'url': '172.gif', alt: '[足球]' }, { 'url': '173.gif', alt: '[瓢虫]' }, { 'url': '174.gif', alt: '[翔]' }, { 'url': '175.gif', alt: '[月亮]' }, { 'url': '176.gif', alt: '[太阳]' }, { 'url': '177.gif', alt: '[礼物]' }, { 'url': '178.gif', alt: '[抱抱]' }, { 'url': '179.gif', alt: '[拇指]' }, { 'url': '180.gif', alt: '[贬低]' }, { 'url': '181.gif', alt: '[握手]' }, { 'url': '182.gif', alt: '[剪刀手]' }, { 'url': '183.gif', alt: '[抱拳]' }, { 'url': '184.gif', alt: '[勾引]' }, { 'url': '185.gif', alt: '[拳头]' }, { 'url': '186.gif', alt: '[小拇指]' }, { 'url': '187.gif', alt: '[拇指八]' }, { 'url': '188.gif', alt: '[食指]' }, { 'url': '189.gif', alt: '[ok]' }
+      ],
+      chat_emoji: []
+      // onlineEmoji: { '100.gif': 'AbNQgA.gif', '101.gif': 'AbN3ut.gif', '102.gif': 'AbNM3d.gif', '103.gif': 'AbN8DP.gif', '104.gif': 'AbNljI.gif', '105.gif': 'AbNtUS.gif', '106.gif': 'AbNGHf.gif', '107.gif': 'AbNYE8.gif', '108.gif': 'AbNaCQ.gif', '109.gif': 'AbNN4g.gif', '110.gif': 'AbN0vn.gif', '111.gif': 'AbNd3j.gif', '112.gif': 'AbNsbV.gif', '113.gif': 'AbNwgs.gif', '114.gif': 'AbNrD0.gif', '115.gif': 'AbNDuq.gif', '116.gif': 'AbNg5F.gif', '117.gif': 'AbN6ET.gif', '118.gif': 'AbNcUU.gif', '119.gif': 'AbNRC4.gif', '120.gif': 'AbNhvR.gif', '121.gif': 'AbNf29.gif', '122.gif': 'AbNW8J.gif', '123.gif': 'AbNob6.gif', '124.gif': 'AbN5K1.gif', '125.gif': 'AbNHUO.gif', '126.gif': 'AbNIDx.gif', '127.gif': 'AbN7VK.gif', '128.gif': 'AbNb5D.gif', '129.gif': 'AbNX2d.gif', '130.gif': 'AbNLPe.gif', '131.gif': 'AbNjxA.gif', '132.gif': 'AbNO8H.gif', '133.gif': 'AbNxKI.gif', '134.gif': 'AbNzrt.gif', '135.gif': 'AbU9Vf.gif', '136.gif': 'AbUSqP.gif', '137.gif': 'AbUCa8.gif', '138.gif': 'AbUkGQ.gif', '139.gif': 'AbUFPg.gif', '140.gif': 'AbUPIS.gif', '141.gif': 'AbUZMn.gif', '142.gif': 'AbUExs.gif', '143.gif': 'AbUA2j.gif', '144.gif': 'AbUMIU.gif', '145.gif': 'AbUerq.gif', '146.gif': 'AbUKaT.gif', '147.gif': 'AbUmq0.gif', '148.gif': 'AbUuZV.gif', '149.gif': 'AbUliF.gif', '150.gif': 'AbU1G4.gif', '151.gif': 'AbU8z9.gif', '152.gif': 'AbU3RJ.gif', '153.gif': 'AbUYs1.gif', '154.gif': 'AbUJMR.gif', '155.gif': 'AbUadK.gif', '156.gif': 'AbUtqx.gif', '157.gif': 'AbUUZ6.gif', '158.gif': 'AbUBJe.gif', '159.gif': 'AbUdIO.gif', '160.gif': 'AbU0iD.gif', '161.gif': 'AbUrzd.gif', '162.gif': 'AbUDRH.gif', '163.gif': 'AbUyQA.gif', '164.gif': 'AbUWo8.gif', '165.gif': 'AbU6sI.gif', '166.gif': 'AbU2eP.gif', '167.gif': 'AbUcLt.gif', '168.gif': 'AbU4Jg.gif', '169.gif': 'AbURdf.gif', '170.gif': 'AbUhFS.gif', '171.gif': 'AbU5WQ.gif', '172.gif': 'AbULwV.gif', '173.gif': 'AbUIzj.gif', '174.gif': 'AbUTQs.gif', '175.gif': 'AbU7yn.gif', '176.gif': 'AbUqe0.gif', '177.gif': 'AbUHLq.gif', '178.gif': 'AbUOoT.gif', '179.gif': 'AbUvYF.gif', '180.gif': 'AbUjFU.gif', '181.gif': 'AbaSSJ.gif', '182.gif': 'AbUxW4.gif', '183.gif': 'AbaCO1.gif', '184.gif': 'Abapl9.gif', '185.gif': 'Aba9yR.gif', '186.gif': 'AbaFw6.gif', '187.gif': 'Abaiex.gif', '188.gif': 'AbakTK.gif', '189.gif': 'AbaZfe.png', '190.gif': 'AbaEFO.gif', '191.gif': 'AbaVYD.gif', '192.gif': 'AbamSH.gif', '193.gif': 'AbaKOI.gif', '194.gif': 'Abanld.gif', '195.gif': 'Abau6A.gif', '196.gif': 'AbaQmt.gif', '197.gif': 'Abal0P.gif', '198.gif': 'AbatpQ.gif', '199.gif': 'Aba1Tf.gif', '200.png': 'Aba8k8.png', '201.png': 'AbaGtS.png', '202.png': 'AbaJfg.png', '203.png': 'AbaNlj.png', '204.png': 'Abawmq.png', '205.png': 'AbaU6s.png', '206.png': 'AbaaXn.png', '207.png': 'Aba000.png', '208.png': 'AbarkT.png', '209.png': 'AbastU.png', '210.png': 'AbaB7V.png', '211.png': 'Abafn1.png', '212.png': 'Abacp4.png', '213.png': 'AbayhF.png', '214.png': 'Abag1J.png', '215.png': 'Aba2c9.png', '216.png': 'AbaRXR.png', '217.png': 'Aba476.png', '218.png': 'Abah0x.png', '219.png': 'Abdg58.png' }
+    }
+  },
+  mounted () {
+    // axios({
+    //   url:'这里是历史聊天记录接口'
+    // })
+  },
+  updated () {
+
+  },
+  methods: {
+    send () {
+      this.showEmoji = false
+      let msg = document.getElementsByClassName('chat_text')[0]
+      // eslint-disable-next-line no-unused-vars
+      // let op = document.getElementsByClassName('op')
+      msg.scrollTop = msg.offsetHeight
+      if (!this.value) {
+        this.$Notice.warning({
+          title: '警告',
+          desc: '请输入有效信息，我们会以最快的速度帮您解答各种问题',
+          duration: 3
+        })
+        return
+      }
+      console.log(this.value)
+      // eslint-disable- next-line no-unused-vars
+
+      // this.changeImg(this.value)
+      console.log(this.arr)
+      // op[op.length].innerHTML += '<img src="http://122.152.214.15/emoji/emoji/"' + this.chat_emoji[1] + '/>'
+      this.list.push(this.value)
+      this.$nextTick(() => {
+        var opArr = this.$refs.op
+        // var odiv = this.$refs.odiv
+
+        for (let i = 0; i < opArr.length; i++) {
+          //  if(opArr.length) 400
+          if (opArr[i].offsetWidth > 400) {
+            opArr[i].style.width = 400 + 'px'
+            opArr[i].style.lineHeight = 20 + 'px'
+          }
+        }
+      })
+      var tag = this.value
+      this.value = ''
+      this.arr = []
+      this.chat_emoji = []
+      // for (let i = 0; i < this.list.length; i++) {
+
+      // }
+      axios
+        .get('http://i.itpk.cn/api.php', {
+          params: {
+            question: tag,
+            api_key: '6d6f6e2ba4d88377b54107e29047994b',
+            api_secret: '6w3h17ufope0'
+          }
+        }).then(ret => {
+          this.list.push(ret.data)
+        }).then(() => {
+          msg.scrollTop = msg.scrollHeight
+        })
+    },
+    getEmj () {
+      this.showEmoji = !this.showEmoji
+    },
+    get (index) {
+      // this.value += this.emojiList[index].alt
+      this.changeImg(this.emojiList[index].alt)
+      this.value += this.arr
+      // this.chat_emoji.push(this.emojiList[index].url)
+      // console.log(this.chat_emoji)
+    },
+    upLoad (res, file) {
+      console.log(res, file)
+      console.log(this.defaultList)
+    },
+    changeImg (str) {
+      // eslint-disable-next-line no-useless-escape
+      // eslint-disable-next-line no-unused-vars
+      let replacedStr = str.replace(/\[([^(\]|\[)]*)\]/g, (item, index) => {
+        // console.log('item: ' + item)
+        for (let i = 0; i < this.emojiList.length; i++) {
+          let row = this.emojiList[i]
+          this.chat_emoji.push(row)
+          // console.log(this.chat_emoji)
+          for (let j = 0; j < this.chat_emoji.length; j++) {
+            // let EM = row[j]
+            if (this.chat_emoji[j].alt === item) {
+              // 在线表情路径，图文混排必须使用网络路径
+              let onlinePath = 'http://122.152.214.15/emoji/emoji/'
+              let imgstr = "<img style='width:24px;height:24px' src='" + onlinePath + this.emojiList[j].url + "'/>"
+              // console.log('imgstr: ' + imgstr)
+              // eslint-disable-next-line no-return-assign
+              return this.arr += imgstr
+            }
+          }
+        }
+      })
+    },
+    close () {
+      this.showK = false
+    },
+    changeBack (e) {
+      console.log(e)
+      this.isTrue = !this.isTrue
+    }
+
+  },
+  // 注册局部组件指令
+  directives: {
+    drag: function (el) {
+      let dragBox = el // 获取当前元素
+      dragBox.onmousedown = e => {
+        let disX = e.clientX - dragBox.offsetLeft
+        let disY = e.clientY - dragBox.offsetTop
+        // eslint-disable-next-line no-unused-vars
+        let con = document.getElementsByClassName('content')[0]
+        // eslint-disable-next-line no-unused-vars
+        var a = 274
+        // eslint-disable-next-line no-unused-vars
+        var b = 64
+        document.onmousemove = e => {
+          let left = e.clientX - disX
+          let top = e.clientY - disY
+
+          //   console.log(left, top)
+
+          dragBox.style.left = left + 'px'
+          dragBox.style.top = top + 'px'
+        }
+        document.onmouseup = e => {
+          document.onmousemove = null
+          document.onmouseup = null
+        }
+      }
+    }
+  }
+
+}
+</script>
+
+<style scoped>
+.content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.wrapper{
+    width: 700px;
+    height: 600px;
+    border: 1px solid #ccc;
+    bottom: 200px;
+    position: absolute;
+    z-index: 999;
+    background: #f5f5f5;
+    border-left: none;
+    border-right: none
+}
+.head{
+    width: 100%;
+    height: 80px;
+    background: #fff;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 20px;
+    color: #444444;
+    border-bottom: 1px solid #2725250f;
+    border-right: 1px solid #ccc
+}
+.head span{
+
+     position: absolute;
+    align-self: flex-start;
+    cursor: pointer;
+    right: 10px
+}
+.chat_text{
+    width: 100%;
+    height: 550px;
+    overflow: auto;
+    border: 1px solid #fff;
+    position: relative;
+    background: #fff;
+ padding-bottom: 40px;
+ border-left: none;
+ border-right: 1px solid #ccc
+}
+.input_text{
+    width: 100%;
+    height: 150px;
+    background: #f5f5f5;
+    position: relative;
+    font-size: 14px
+}
+.input_text textarea{
+  border: 1px solid #ccc;
+  border-left: none;
+
+}
+.btn{
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+}
+.me{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top:15px
+}
+.me p{
+    margin-right: 15px;
+    line-height:34px;
+    padding: 0 10px;
+    border-radius: 5px;
+    font-size: 14px;
+
+text-overflow:ellipsis;
+
+word-wrap:break-word
+
+}
+.me img{
+    margin-right:15px
+}
+/* 显示文字的外层div */
+.xiaoai{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center
+}
+.xiaoai p{
+    margin-left: 15px;
+    padding: 0 10px;
+    border-radius: 5px;
+      background: #fff;
+       line-height:34px;
+       text-overflow:ellipsis;
+
+word-wrap:break-word;
+
+    font-size: 14px;
+}
+.xiaoai img{
+    margin-left:15px
+}
+/* .mid{
+  width: 100%;
+  height: 30px;
+border:1px solid #ccc;
+  background: #f5f5f5
+}
+.mid_list{
+  width: 100%;
+
+} */
+.mid_list li{
+    float: left;
+    list-style: none;
+    line-height: 24px;
+    margin-left: 15px
+}
+.users{
+  width: 204px;
+  height: 781px;
+  background: #d9d9d9;
+  position: absolute;
+  top: -1px;
+left: -205px;
+display: flex;
+align-items: center;
+flex-direction: column
+}
+.users_one{
+  width: 190px;
+  height: 50px;
+  background: #f3f3f3;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 5px
+}
+.editor{
+  width: 100%;
+  position: absolute;
+  z-index: 999;
+  bottom: -33px;
+  border:1px solid #ccc;
+  border-bottom:none;
+  display: flex;
+  background: #fff;
+  border-left: none
+
+}
+.editor img{
+  width: 22px;
+  height: 21px;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-top: 5px
+}
+.emoj ul{
+  display: flex;
+  width: 360px;
+  flex-wrap: wrap;
+  position: absolute;
+  z-index: 999;
+  left: 15px;
+  bottom: 10px
+}
+.emoj ul li{
+  width: 24px;
+  height: 24px;
+  list-style: none;
+}
+.op{
+  background: #9eea6a;
+
+}
+.op img{
+    width: 50px;
+    height: 50px
+}
+
+.op1 img{
+    width: 50px;
+    height: 50px
+}
+.backg{
+  width: 190px;
+  height: 50px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 5px
+}
+.transm{
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc
+}
+.biao{
+  position: absolute;
+  top: 0
+}
+</style>
