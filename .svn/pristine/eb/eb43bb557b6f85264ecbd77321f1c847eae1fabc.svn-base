@@ -1,5 +1,9 @@
+/**
+ * @author edith
+ * @date 2019/10/11
+*/
 <template>
-  <div ref="dom" class="charts chart-bar"></div>
+  <div ref="dom" class="charts chart-pie"></div>
 </template>
 
 <script>
@@ -8,11 +12,13 @@ import tdTheme from './theme.json'
 import { on, off } from '@/libs/tools'
 echarts.registerTheme('tdTheme', tdTheme)
 export default {
-  name: 'ChartBar',
+  name: 'ChartPie',
   props: {
-    value: Object,
+    value: Array,
+    pieTitle: String,
     text: String,
-    subtext: String
+    subtext: String,
+    radius: String
   },
   data () {
     return {
@@ -26,8 +32,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let xAxisData = Object.keys(this.value)
-      let seriesData = Object.values(this.value)
+      let legend = this.value.map(_ => _.name)
       let option = {
         title: {
           text: this.text,
@@ -38,23 +43,31 @@ export default {
             color: '#333'
           }
         },
-        xAxis: {
-          type: 'category',
-          data: xAxisData,
-          splitLine: {
-            show: false
-          }
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
-        yAxis: {
-          type: 'value',
-          splitLine: {
-            show: false
-          }
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: legend
         },
-        series: [{
-          data: seriesData,
-          type: 'bar',
-        }]
+        series: [
+          {
+            name: this.pieTitle,
+            type: 'pie',
+            radius: ['35%', '60%'],
+            center: ['50%', '60%'],
+            data: this.value,
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       }
       this.dom = echarts.init(this.$refs.dom, 'tdTheme')
       this.dom.setOption(option)
